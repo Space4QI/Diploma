@@ -1,15 +1,15 @@
 package org.example.Dto;
 
-public class LoginRequest {
+public class UserLoginDTO {
     private String phone;
     private String password;
 
-    public LoginRequest(String phone, String password) {
+    public UserLoginDTO(String phone, String password) {
         this.phone = phone;
         this.password = password;
     }
 
-    public LoginRequest() {}
+    public UserLoginDTO() {}
 
     public String getPhone() {
         return phone;

@@ -1,5 +1,6 @@
 package org.example.services;
 
+import jakarta.transaction.Transactional;
 import org.example.Dto.EventDTO;
 import org.example.mappers.EventMapper;
 import org.example.models.Event;
@@ -51,9 +52,11 @@ public class EventService {
     }
 
     public void finishEvent(UUID id) {
+        System.out.println("Finishing event: " + id);
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
         event.setFinished(true);
         eventRepository.save(event);
     }
+
 }

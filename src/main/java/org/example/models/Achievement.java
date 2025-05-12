@@ -3,13 +3,10 @@ package org.example.models;
 import jakarta.persistence.*;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "achievements")
-public class Achievement {
-    @Id
-    private UUID id;
+public class Achievement extends BaseEntity {
 
     private String title;
     private String description;
@@ -18,22 +15,14 @@ public class Achievement {
     @OneToMany(mappedBy = "achievement")
     private Set<UserAchievementCrossRef> userRefs;
 
-    public Achievement(UUID id, String title, String description, int imageResId, Set<UserAchievementCrossRef> userRefs) {
-        this.id = id;
+    public Achievement(String title, String description, int imageResId, Set<UserAchievementCrossRef> userRefs) {
         this.title = title;
         this.description = description;
         this.imageResId = imageResId;
         this.userRefs = userRefs;
     }
 
-    public Achievement() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+    public Achievement() {
     }
 
     public String getTitle() {

@@ -1,16 +1,16 @@
 package org.example.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "events")
-public class Event {
-    @Id
-    private UUID id;
+public class Event extends BaseEntity {
 
     private String title;
     private String description;
@@ -37,15 +37,19 @@ public class Event {
     @JoinColumn(name = "creator_id")
     private User creator;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
+    @ManyToMany
+    @JoinTable(
+            name = "event_team",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "team_id")
+    )
+    private Set<Team> teams = new HashSet<>();
+
 
     @OneToMany(mappedBy = "event")
     private Set<UserEventCrossRef> userRefs;
 
-    public Event(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, boolean isFavorite, boolean isFinished, List<String> imageUri, int participantCount, List<String> participant, boolean rejected, boolean completed, boolean verified, String confirmationComment, User creator, Team team, Set<UserEventCrossRef> userRefs) {
-        this.id = id;
+    public Event(String title, String description, String locationName, double latitude, double longitude, String dateTime, boolean isFavorite, boolean isFinished, List<String> imageUri, int participantCount, List<String> participant, boolean rejected, boolean completed, boolean verified, String confirmationComment, User creator, Set<Team> teams, Set<UserEventCrossRef> userRefs) {
         this.title = title;
         this.description = description;
         this.locationName = locationName;
@@ -62,27 +66,11 @@ public class Event {
         this.verified = verified;
         this.confirmationComment = confirmationComment;
         this.creator = creator;
-        this.team = team;
+        this.teams = teams;
         this.userRefs = userRefs;
     }
 
-    public List<String> getParticipant() {
-        return participant;
-    }
-
-    public void setParticipant(List<String> participant) {
-        this.participant = participant;
-    }
-
     public Event() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -156,6 +144,22 @@ public class Event {
         this.imageUri = imageUri;
     }
 
+    public int getParticipantCount() {
+        return participantCount;
+    }
+
+    public void setParticipantCount(int participantCount) {
+        this.participantCount = participantCount;
+    }
+
+    public List<String> getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(List<String> participant) {
+        this.participant = participant;
+    }
+
     public boolean isRejected() {
         return rejected;
     }
@@ -196,12 +200,12 @@ public class Event {
         this.creator = creator;
     }
 
-    public Team getTeam() {
-        return team;
+    public Set<Team> getTeams() {
+        return teams;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
     }
 
     public Set<UserEventCrossRef> getUserRefs() {
@@ -210,13 +214,5 @@ public class Event {
 
     public void setUserRefs(Set<UserEventCrossRef> userRefs) {
         this.userRefs = userRefs;
-    }
-
-    public int getParticipantCount() {
-        return participantCount;
-    }
-
-    public void setParticipantCount(int participantCount) {
-        this.participantCount = participantCount;
     }
 }

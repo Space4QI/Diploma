@@ -36,6 +36,12 @@ public class TeamController {
         return ResponseEntity.ok(teamService.save(dto));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTeam(@PathVariable UUID id) {
+        teamService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{teamId}/join/{userId}")
     public ResponseEntity<Void> joinTeam(@PathVariable UUID teamId, @PathVariable UUID userId) {
         teamService.joinTeam(teamId, userId);

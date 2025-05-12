@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
-    List<Event> findByTeamId(UUID teamId);
+    List<Event> findByTeams_Id(UUID teamId);
+
     List<Event> findByCreatorId(UUID creatorId);
 
     List<Event> findByCompletedTrueAndVerifiedFalse();

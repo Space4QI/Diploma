@@ -2,13 +2,15 @@ package org.example.init;
 
 import jakarta.annotation.PostConstruct;
 import org.example.models.*;
-import org.example.repositories.*;
+import org.example.repositories.AchievementRepository;
+import org.example.repositories.EventRepository;
+import org.example.repositories.TeamRepository;
+import org.example.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 @Component
 public class DataInitializer {
@@ -33,7 +35,6 @@ public class DataInitializer {
     public void init() {
         // Команда
         Team team = new Team();
-        team.setId(UUID.randomUUID());
         team.setName("Чистюли");
         team.setColor(123456);
         team.setAreaPoints("[]");
@@ -42,7 +43,6 @@ public class DataInitializer {
 
         // Админ
         User admin = new User();
-        admin.setId(UUID.randomUUID());
         admin.setName("Админ");
         admin.setNickname("admin01");
         admin.setPhone("9990000001");
@@ -55,7 +55,6 @@ public class DataInitializer {
 
         // Организатор
         User organizer = new User();
-        organizer.setId(UUID.randomUUID());
         organizer.setName("Организатор");
         organizer.setNickname("org01");
         organizer.setPhone("9990000002");
@@ -69,7 +68,6 @@ public class DataInitializer {
 
         // Пользователь
         User user = new User();
-        user.setId(UUID.randomUUID());
         user.setName("Пользователь");
         user.setNickname("user01");
         user.setPhone("9990000003");
@@ -83,7 +81,6 @@ public class DataInitializer {
 
         // Событие
         Event event = new Event();
-        event.setId(UUID.randomUUID());
         event.setTitle("Субботник в парке");
         event.setDescription("Уборка территории, покраска скамеек и посадка деревьев");
         event.setLocationName("Парк Победы");
@@ -99,12 +96,11 @@ public class DataInitializer {
         event.setParticipantCount(3);
         event.setConfirmationComment("Чисто");
         event.setImageUri(List.of("img/clean1.jpg", "img/clean2.jpg", "img/clean3.jpg"));
-        event.setTeam(team);
+        event.setTeams(Set.of(team)); // ← замена здесь
         eventRepository.save(event);
 
         // Достижение
         Achievement achievement = new Achievement();
-        achievement.setId(UUID.randomUUID());
         achievement.setTitle("Первый шаг");
         achievement.setDescription("Участвуй в первом субботнике");
         achievement.setImageResId(1);

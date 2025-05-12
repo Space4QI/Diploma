@@ -2,12 +2,14 @@ package org.example.services;
 
 import org.example.Dto.TeamDTO;
 import org.example.mappers.TeamMapper;
+import org.example.models.Event;
 import org.example.models.Team;
 import org.example.models.User;
 import org.example.repositories.TeamRepository;
 import org.example.repositories.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.example.repositories.EventRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +21,13 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final TeamMapper teamMapper;
+    private final EventRepository eventRepository;
 
-    public TeamService(TeamRepository teamRepository, UserRepository userRepository, TeamMapper teamMapper) {
+    public TeamService(TeamRepository teamRepository, UserRepository userRepository, TeamMapper teamMapper, EventRepository eventRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.teamMapper = teamMapper;
+        this.eventRepository = eventRepository;
     }
 
     @Cacheable("teams")
@@ -42,6 +46,22 @@ public class TeamService {
         Team saved = teamRepository.save(teamMapper.toEntity(dto));
         return teamMapper.toDTO(saved);
     }
+
+    public void delete(UUID id) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+        for (Event event : eventRepository.findByTeams_Id(team.getId())) {
+            event.getTeams().remove(team);
+            eventRepository.save(event);
+        }
+        List<User> usersWithTeam = userRepository.findByTeamId(team.getId());
+        for (User user : usersWithTeam) {
+            user.setTeam(null);
+            userRepository.save(user);
+        }
+        teamRepository.delete(team);
+    }
+
 
     public void joinTeam(UUID teamId, UUID userId) {
         User user = userRepository.findById(userId).orElseThrow();

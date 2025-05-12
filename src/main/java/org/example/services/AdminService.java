@@ -52,16 +52,18 @@ public class AdminService {
 
     public void verifyEvent(UUID eventId, int teamPoints, String comment) {
         Event event = eventRepository.findById(eventId).orElseThrow();
-        Team team = event.getTeam();
 
         event.setVerified(true);
         event.setRejected(false);
         event.setConfirmationComment(comment);
         eventRepository.save(event);
 
-        team.setPoints(team.getPoints() + teamPoints);
-        teamRepository.save(team);
+        for (Team team : event.getTeams()) {
+            team.setPoints(team.getPoints() + teamPoints);
+            teamRepository.save(team);
+        }
     }
+
 
     public void addPointsToParticipant(UUID eventId, String participantName, int points) {
         Event event = eventRepository.findById(eventId).orElseThrow();

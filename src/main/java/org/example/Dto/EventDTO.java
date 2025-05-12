@@ -1,32 +1,60 @@
 package org.example.Dto;
 
 import jakarta.persistence.ElementCollection;
+import jakarta.validation.constraints.*;
 
 import java.util.UUID;
 import java.util.List;
 
 public class EventDTO {
+
     private UUID id;
+
+    @NotBlank
+    @Size(max = 100)
     private String title;
+
+    @Size(max = 500)
     private String description;
+
+    @NotBlank
     private String locationName;
+
+    @DecimalMin(value = "-90.0") @DecimalMax(value = "90.0")
     private double latitude;
+
+    @DecimalMin(value = "-180.0") @DecimalMax(value = "180.0")
     private double longitude;
+
+    @NotBlank
     private String dateTime;
+
+    @NotNull
     private UUID creatorId;
+
     private boolean isFavorite;
+
     private UUID teamId;
-    private List<String> imageUri;
-    private boolean completed;
+
+    private List<@NotBlank String> imageUri;
+
     private boolean verified;
+
+    @Size(max = 300)
     private String confirmationComment;
+
     private boolean isFinished;
+
     private String teamName;
+
+    @Min(0)
     private int participantCount;
-    private List<String> participant;
+
+    private List<@NotBlank String> participant;
+
     private boolean rejected;
 
-    public EventDTO(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, UUID creatorId, boolean isFavorite, UUID teamId, List<String> imageUri, boolean completed, boolean verified, String confirmationComment, boolean isFinished, String teamName, int participantCount, List<String> participant, boolean rejected) {
+    public EventDTO(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, UUID creatorId, boolean isFavorite, UUID teamId, List<String> imageUri, boolean verified, String confirmationComment, boolean isFinished, String teamName, int participantCount, List<String> participant, boolean rejected) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -38,7 +66,6 @@ public class EventDTO {
         this.isFavorite = isFavorite;
         this.teamId = teamId;
         this.imageUri = imageUri;
-        this.completed = completed;
         this.verified = verified;
         this.confirmationComment = confirmationComment;
         this.isFinished = isFinished;
@@ -144,14 +171,6 @@ public class EventDTO {
 
     public void setImageUri(List<String> imageUri) {
         this.imageUri = imageUri;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
     }
 
     public boolean isVerified() {

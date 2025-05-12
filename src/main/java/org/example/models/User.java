@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-public class User {
-    @Id
-    private UUID id;
+public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -34,8 +31,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<UserAchievementCrossRef> achievementRefs;
 
-    public User(UUID id, String name, Role role, String nickname, String phone, String password, int points, int eventCount, String avatarUri, Team team, Set<UserEventCrossRef> eventCrossRefs, Set<UserAchievementCrossRef> achievementRefs) {
-        this.id = id;
+    public User(String name, Role role, String nickname, String phone, String password, int points, int eventCount, String avatarUri, Team team, Set<UserEventCrossRef> eventCrossRefs, Set<UserAchievementCrossRef> achievementRefs) {
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;
@@ -49,14 +45,7 @@ public class User {
         this.achievementRefs = achievementRefs;
     }
 
-    public User() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+    public User() {
     }
 
     public String getName() {

@@ -2,18 +2,16 @@ package org.example.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "teams")
-public class Team {
-    @Id
-    private UUID id;
+public class Team extends BaseEntity {
 
     private String name;
     private int color;
@@ -24,11 +22,11 @@ public class Team {
     @OneToMany(mappedBy = "team")
     private Set<User> users;
 
-    @OneToMany(mappedBy = "team")
-    private Set<Event> events;
+    @ManyToMany(mappedBy = "teams")
+    private Set<Event> events = new HashSet<>();
 
-    public Team(UUID id, String name, int color, String areaPoints, int points, Set<User> users, Set<Event> events) {
-        this.id = id;
+
+    public Team(String name, int color, String areaPoints, int points, Set<User> users, Set<Event> events) {
         this.name = name;
         this.color = color;
         this.areaPoints = areaPoints;
@@ -37,14 +35,7 @@ public class Team {
         this.events = events;
     }
 
-    public Team() {}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+    public Team() {
     }
 
     public String getName() {
