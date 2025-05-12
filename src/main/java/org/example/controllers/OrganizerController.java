@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/organizer")
-@PreAuthorize("hasAnyRole('ORGANIZER', 'ADMIN')")
+//@PreAuthorize("hasAnyRole('ORGANIZER', 'ADMIN')")
 public class OrganizerController {
 
     @PostMapping("/create-event")

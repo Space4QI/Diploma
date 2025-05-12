@@ -1,9 +1,12 @@
 package org.example.Dto;
 
 import org.example.models.Role;
+
+import java.io.Serializable;
 import java.util.UUID;
 
-public class UserDTO {
+public class UserDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     private UUID id;
     private String name;
     private String nickname;
