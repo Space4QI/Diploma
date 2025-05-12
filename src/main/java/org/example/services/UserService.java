@@ -2,6 +2,7 @@ package org.example.services;
 
 import org.example.Dto.UserDTO;
 import org.example.mappers.UserMapper;
+import org.example.models.Role;
 import org.example.models.User;
 import org.example.repositories.UserRepository;
 import org.springframework.cache.annotation.Cacheable;
@@ -41,6 +42,13 @@ public class UserService {
     public UserDTO save(UserDTO dto) {
         User user = userRepository.save(userMapper.toEntity(dto));
         return userMapper.toDTO(user);
+    }
+
+    public void assignRole(UUID userId, String role) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(Role.valueOf(role.toUpperCase()));
+        userRepository.save(user);
     }
 
     public void delete(UUID id) {

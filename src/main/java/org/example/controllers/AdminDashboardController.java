@@ -1,10 +1,12 @@
 package org.example.controllers;
 
 import org.example.services.AdminService;
+import org.example.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -12,17 +14,21 @@ import java.util.UUID;
 public class AdminDashboardController {
 
     private final AdminService adminService;
+    private final UserService userService;
 
-    public AdminDashboardController(AdminService adminService) {
+    public AdminDashboardController(AdminService adminService, UserService userService) {
         this.adminService = adminService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String adminPage(Model model) {
         model.addAttribute("teams", adminService.getAllTeams());
         model.addAttribute("events", adminService.getEventsToVerify());
+        model.addAttribute("users", userService.getAll()); // <-- добавь это
         return "admin";
     }
+
 
     @PostMapping("/add-points")
     public String addPoints(@RequestParam UUID teamId,
@@ -51,6 +57,20 @@ public class AdminDashboardController {
     public String rejectEvent(@RequestParam UUID eventId,
                               @RequestParam(required = false) String comment) {
         adminService.rejectEvent(eventId, comment);
+        return "redirect:/admin";
+    }
+
+//    @GetMapping("/manage-roles")
+//    public String manageRolesPage(Model model) {
+//        model.addAttribute("users", userService.getAll());
+//        model.addAttribute("availableRoles", List.of("USER", "ORGANIZER", "ADMIN"));
+//        return "admin-manage-roles";
+//    }
+
+    @PostMapping("/assign-role")
+    public String assignRole(@RequestParam UUID userId,
+                             @RequestParam String role) {
+        userService.assignRole(userId, role);
         return "redirect:/admin";
     }
 
