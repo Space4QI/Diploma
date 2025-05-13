@@ -4507,3 +4507,49 @@ java.io.NotSerializableException: org.example.Dto.UserDTO
         users u1_0 
     where
         u1_0.phone=?
+2025-05-12T11:57:28.197Z  INFO 1 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-12T11:57:28.201Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists event_image_uri 
+       drop constraint if exists FK7bcexgcfkjrsl5ks0kxwxnb9i
+2025-05-12T11:57:28.212Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists event_participant 
+       drop constraint if exists FKo7p3n4vghorbjaf68f1wvwgdp
+2025-05-12T11:57:28.216Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists events 
+       drop constraint if exists FK7ljm71n1057envlomdxcni5hs
+2025-05-12T11:57:28.220Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists events 
+       drop constraint if exists FKpp326w6hkksd9r1n696qa7pfv
+2025-05-12T11:57:28.223Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists user_achievement_cross_ref 
+       drop constraint if exists FK6nntywjpom058txhiogp2b3av
+2025-05-12T11:57:28.226Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists user_achievement_cross_ref 
+       drop constraint if exists FKrhuoigo4p19kqr5atvyjx6s1k
+2025-05-12T11:57:28.229Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists user_event_cross_ref 
+       drop constraint if exists FKfiy8l8cqr7ul56yk2vjo7j5rn
+2025-05-12T11:57:28.232Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists user_event_cross_ref 
+       drop constraint if exists FKc1ql7sycdmpdhy9h0d7hcir0k
+2025-05-12T11:57:28.235Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    alter table if exists users 
+       drop constraint if exists FKfjws1rdruab2bqg7qipoqf65r
+2025-05-12T11:57:28.238Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists achievements cascade
+2025-05-12T11:57:28.247Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists event_image_uri cascade
+2025-05-12T11:57:28.251Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists event_participant cascade
+2025-05-12T11:57:28.254Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists events cascade
+2025-05-12T11:57:28.258Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists teams cascade
+2025-05-12T11:57:28.261Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists user_achievement_cross_ref cascade
+2025-05-12T11:57:28.265Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists user_event_cross_ref cascade
+2025-05-12T11:57:28.268Z DEBUG 1 --- [SpringApplicationShutdownHook] org.hibernate.SQL                        : 
+    drop table if exists users cascade
+2025-05-12T11:57:28.277Z  INFO 1 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-12T11:57:28.286Z  INFO 1 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

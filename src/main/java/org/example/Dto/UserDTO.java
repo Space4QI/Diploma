@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import org.example.models.Role;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 public class UserDTO implements Serializable {
@@ -44,7 +45,9 @@ public class UserDTO implements Serializable {
     )
     private String password;
 
-    public UserDTO(UUID id, String name, String nickname, String phone, Role role, int points, int eventCount, String avatarUri, UUID teamId, String password) {
+    private List<AchievementDTO> achievements;
+
+    public UserDTO(UUID id, String name, String nickname, String phone, Role role, int points, int eventCount, String avatarUri, UUID teamId, String password, List<AchievementDTO> achievements) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;
@@ -55,6 +58,7 @@ public class UserDTO implements Serializable {
         this.avatarUri = avatarUri;
         this.teamId = teamId;
         this.password = password;
+        this.achievements = achievements;
     }
 
     public UserDTO() {}
@@ -137,5 +141,13 @@ public class UserDTO implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<AchievementDTO> getAchievements() {
+        return achievements;
+    }
+
+    public void setAchievements(List<AchievementDTO> achievements) {
+        this.achievements = achievements;
     }
 }

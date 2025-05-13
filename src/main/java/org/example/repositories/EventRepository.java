@@ -16,4 +16,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     List<Event> findByCompletedTrueAndVerifiedFalse();
 
     List<Event> findByVerifiedTrue();
+
+    long countByCreator_Id(UUID creatorId);
+
 }

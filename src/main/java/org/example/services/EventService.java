@@ -4,7 +4,11 @@ import jakarta.transaction.Transactional;
 import org.example.Dto.EventDTO;
 import org.example.mappers.EventMapper;
 import org.example.models.Event;
+import org.example.models.User;
+import org.example.models.UserEventCrossRef;
 import org.example.repositories.EventRepository;
+import org.example.repositories.UserEventRepository;
+import org.example.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,10 +24,16 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private static final Logger log = LoggerFactory.getLogger(EventService.class);
+    private final UserRepository userRepository;
+    private final UserEventRepository userEventRepository;
+    private final AchievementService achievementService;
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, UserRepository userRepository, UserEventRepository userEventRepository, AchievementService achievementService) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+        this.userRepository = userRepository;
+        this.userEventRepository = userEventRepository;
+        this.achievementService = achievementService;
     }
 
     @Cacheable("unverifiedEvents")
@@ -46,6 +56,21 @@ public class EventService {
         Event saved = eventRepository.save(eventMapper.toEntity(dto));
         return eventMapper.toDTO(saved);
     }
+
+    public void participateInEvent(UUID eventId, UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+
+        if (!userEventRepository.existsByUserAndEvent(user, event)) {
+            UserEventCrossRef ref = new UserEventCrossRef();
+            ref.setUser(user);
+            ref.setEvent(event);
+            userEventRepository.save(ref);
+        }
+
+        achievementService.checkAndAssign(user);
+    }
+
 
     public void delete(UUID id) {
         eventRepository.deleteById(id);

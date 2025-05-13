@@ -52,4 +52,11 @@ public class EventController {
         eventService.finishEvent(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{eventId}/participate/{userId}")
+    public ResponseEntity<Void> participateInEvent(@PathVariable UUID eventId,
+                                                   @PathVariable UUID userId) {
+        eventService.participateInEvent(eventId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -22,12 +22,14 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamMapper teamMapper;
     private final EventRepository eventRepository;
+    private final AchievementService achievementService;
 
-    public TeamService(TeamRepository teamRepository, UserRepository userRepository, TeamMapper teamMapper, EventRepository eventRepository) {
+    public TeamService(TeamRepository teamRepository, UserRepository userRepository, TeamMapper teamMapper, EventRepository eventRepository, AchievementService achievementService) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.teamMapper = teamMapper;
         this.eventRepository = eventRepository;
+        this.achievementService = achievementService;
     }
 
     @Cacheable("teams")
@@ -64,11 +66,17 @@ public class TeamService {
 
 
     public void joinTeam(UUID teamId, UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        Team team = teamRepository.findById(teamId).orElseThrow();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
         user.setTeam(team);
         userRepository.save(user);
+
+        achievementService.checkAndAssign(user);
     }
+
 
     public void leaveTeam(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow();

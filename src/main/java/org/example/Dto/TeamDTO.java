@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
 import java.util.UUID;
 
 public class TeamDTO {
@@ -22,12 +23,15 @@ public class TeamDTO {
     @Min(value = 0, message = "Points cannot be negative")
     private int points;
 
-    public TeamDTO(UUID id, String name, int color, String areaPoints, int points) {
+    private List<UUID> eventIds;
+
+    public TeamDTO(UUID id, String name, int color, String areaPoints, int points, List<UUID> eventIds) {
         this.id = id;
         this.name = name;
         this.color = color;
         this.areaPoints = areaPoints;
         this.points = points;
+        this.eventIds = eventIds;
     }
 
     public TeamDTO() {}
@@ -71,5 +75,13 @@ public class TeamDTO {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public List<UUID> getEventIds() {
+        return eventIds;
+    }
+
+    public void setEventIds(List<UUID> eventIds) {
+        this.eventIds = eventIds;
     }
 }
