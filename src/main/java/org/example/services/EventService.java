@@ -57,14 +57,16 @@ public class EventService {
     public EventDTO save(EventDTO dto) {
         Event event = eventMapper.toEntity(dto);
 
-        if (dto.getTeamId() != null) {
-            Team team = teamRepository.findById(dto.getTeamId())
-                    .orElseThrow(() -> new RuntimeException("Team not found"));
-            event.setTeams(Set.of(team));
-        }
+        Event savedEvent = eventRepository.save(event);
 
-        Event saved = eventRepository.save(event);
-        return eventMapper.toDTO(saved);
+        User creator = userRepository.findById(dto.getCreatorId()).orElseThrow();
+        UserEventCrossRef ref = new UserEventCrossRef(creator, savedEvent);
+        userEventRepository.save(ref);
+
+        creator.setEventCount(creator.getEventCount() + 1);
+        userRepository.save(creator);
+
+        return eventMapper.toDTO(savedEvent);
     }
 
     public void joinEvent(UUID eventId, UUID userId) {
