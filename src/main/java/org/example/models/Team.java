@@ -1,10 +1,7 @@
 package org.example.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +12,7 @@ public class Team extends BaseEntity {
 
     private String name;
     private int color;
+    @Column(length = 10000) // или даже больше, если нужно
     private String areaPoints;
     private int points;
 
@@ -33,6 +31,15 @@ public class Team extends BaseEntity {
         this.points = points;
         this.users = users;
         this.events = events;
+    }
+
+    public Team(String name, int color, String areaPoints) {
+        this.name = name;
+        this.color = color;
+        this.areaPoints = areaPoints;
+        this.points = 0;
+        this.users = new HashSet<>();
+        this.events = new HashSet<>();
     }
 
     public Team() {

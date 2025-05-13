@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 import org.example.Dto.EventDTO;
 import org.example.mappers.EventMapper;
 import org.example.models.Event;
+import org.example.models.Team;
 import org.example.models.User;
 import org.example.models.UserEventCrossRef;
 import org.example.repositories.EventRepository;
+import org.example.repositories.TeamRepository;
 import org.example.repositories.UserEventRepository;
 import org.example.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,13 +30,15 @@ public class EventService {
     private final UserRepository userRepository;
     private final UserEventRepository userEventRepository;
     private final AchievementService achievementService;
+    private final TeamRepository teamRepository;
 
-    public EventService(EventRepository eventRepository, EventMapper eventMapper, UserRepository userRepository, UserEventRepository userEventRepository, AchievementService achievementService) {
+    public EventService(EventRepository eventRepository, EventMapper eventMapper, UserRepository userRepository, UserEventRepository userEventRepository, AchievementService achievementService, TeamRepository teamRepository) {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
         this.userRepository = userRepository;
         this.userEventRepository = userEventRepository;
         this.achievementService = achievementService;
+        this.teamRepository = teamRepository;
     }
 
     @Cacheable("unverifiedEvents")
@@ -53,7 +58,16 @@ public class EventService {
     }
 
     public EventDTO save(EventDTO dto) {
-        Event saved = eventRepository.save(eventMapper.toEntity(dto));
+        Event event = eventMapper.toEntity(dto);
+
+        // 👉 связываем с командой, если она указана
+        if (dto.getTeamId() != null) {
+            Team team = teamRepository.findById(dto.getTeamId())
+                    .orElseThrow(() -> new RuntimeException("Team not found"));
+            event.setTeams(Set.of(team));
+        }
+
+        Event saved = eventRepository.save(event);
         return eventMapper.toDTO(saved);
     }
 
