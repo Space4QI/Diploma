@@ -1,8 +1,10 @@
 package org.example.controllers;
 
 import org.example.Dto.TeamDTO;
+import org.example.Dto.UserDTO;
 import org.example.models.Team;
 import org.example.services.TeamService;
+import org.example.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +16,11 @@ import java.util.UUID;
 public class TeamController {
 
     private final TeamService teamService;
+    private final UserService userService;
 
-    public TeamController(TeamService teamService) {
+    public TeamController(TeamService teamService, UserService userService) {
         this.teamService = teamService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -52,5 +56,11 @@ public class TeamController {
     public ResponseEntity<Void> leaveTeam(@PathVariable UUID userId) {
         teamService.leaveTeam(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{teamId}/users")
+    public ResponseEntity<List<UserDTO>> getUsersByTeam(@PathVariable UUID teamId) {
+        List<UserDTO> users = userService.getUsersByTeam(teamId);
+        return ResponseEntity.ok(users);
     }
 }

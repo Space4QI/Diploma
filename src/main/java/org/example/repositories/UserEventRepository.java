@@ -20,4 +20,5 @@ public interface UserEventRepository extends JpaRepository<UserEventCrossRef, Us
 
     long countByUser_Id(UUID userId);
 
+    void deleteByUserAndEvent(User user, Event event);
 }

@@ -3,10 +3,7 @@ package org.example.services;
 import jakarta.transaction.Transactional;
 import org.example.Dto.EventDTO;
 import org.example.mappers.EventMapper;
-import org.example.models.Event;
-import org.example.models.Team;
-import org.example.models.User;
-import org.example.models.UserEventCrossRef;
+import org.example.models.*;
 import org.example.repositories.EventRepository;
 import org.example.repositories.TeamRepository;
 import org.example.repositories.UserEventRepository;
@@ -60,7 +57,6 @@ public class EventService {
     public EventDTO save(EventDTO dto) {
         Event event = eventMapper.toEntity(dto);
 
-        // 👉 связываем с командой, если она указана
         if (dto.getTeamId() != null) {
             Team team = teamRepository.findById(dto.getTeamId())
                     .orElseThrow(() -> new RuntimeException("Team not found"));
@@ -69,6 +65,33 @@ public class EventService {
 
         Event saved = eventRepository.save(event);
         return eventMapper.toDTO(saved);
+    }
+
+    public void joinEvent(UUID eventId, UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Event event = eventRepository.findById(eventId).orElseThrow();
+
+        boolean alreadyJoined = userEventRepository.existsById(new UserEventKey(userId, eventId));
+        if (!alreadyJoined) {
+            UserEventCrossRef ref = new UserEventCrossRef(user, event);
+            userEventRepository.save(ref);
+
+            user.setEventCount(user.getEventCount() + 1);
+            userRepository.save(user);
+        }
+    }
+
+    @Transactional
+    public void leaveEvent(UUID eventId, UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Event event = eventRepository.findById(eventId).orElseThrow();
+
+        userEventRepository.deleteByUserAndEvent(user, event);
+
+        if (user.getEventCount() > 0) {
+            user.setEventCount(user.getEventCount() - 1);
+            userRepository.save(user);
+        }
     }
 
     public void participateInEvent(UUID eventId, UUID userId) {
@@ -85,6 +108,12 @@ public class EventService {
         achievementService.checkAndAssign(user);
     }
 
+    public List<EventDTO> getEventsByTeam(UUID teamId) {
+        return eventRepository.findByTeams_Id(teamId)
+                .stream()
+                .map(eventMapper::toDTO)
+                .toList();
+    }
 
     public void delete(UUID id) {
         eventRepository.deleteById(id);

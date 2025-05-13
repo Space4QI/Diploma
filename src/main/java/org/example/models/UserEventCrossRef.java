@@ -2,52 +2,36 @@ package org.example.models;
 
 import jakarta.persistence.*;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "user_event_cross_ref")
-@IdClass(UserEventKey.class)
 public class UserEventCrossRef {
 
-    @Id
-    @Column(name = "user_id")
-    private UUID userId;
+    @EmbeddedId
+    private UserEventKey id = new UserEventKey();
 
-    @Id
-    @Column(name = "event_id")
-    private UUID eventId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("eventId")
+    @JoinColumn(name = "event_id")
     private Event event;
 
-    public UserEventCrossRef(UUID userId, UUID eventId, User user, Event event) {
-        this.userId = userId;
-        this.eventId = eventId;
+    public UserEventCrossRef() {}
+
+    public UserEventCrossRef(User user, Event event) {
         this.user = user;
         this.event = event;
     }
 
-    public UserEventCrossRef() {}
-
-    public UUID getUserId() {
-        return userId;
+    public UserEventKey getId() {
+        return id;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public UUID getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(UUID eventId) {
-        this.eventId = eventId;
+    public void setId(UserEventKey id) {
+        this.id = id;
     }
 
     public User getUser() {

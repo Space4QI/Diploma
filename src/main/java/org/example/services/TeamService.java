@@ -1,6 +1,7 @@
 package org.example.services;
 
 import org.example.Dto.TeamDTO;
+import org.example.Dto.UserDTO;
 import org.example.mappers.TeamMapper;
 import org.example.models.Event;
 import org.example.models.Team;
@@ -63,7 +64,6 @@ public class TeamService {
         }
         teamRepository.delete(team);
     }
-
 
     public void joinTeam(UUID teamId, UUID userId) {
         User user = userRepository.findById(userId)

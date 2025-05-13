@@ -51,6 +51,13 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<UserDTO> getUsersByTeam(UUID teamId) {
+        return userRepository.findByTeamId(teamId)
+                .stream()
+                .map(userMapper::toDTO)
+                .toList();
+    }
+
     public void delete(UUID id) {
         userRepository.deleteById(id);
     }

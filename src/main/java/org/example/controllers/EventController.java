@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import jakarta.transaction.Transactional;
 import org.example.Dto.EventDTO;
 import org.example.services.EventService;
 import org.slf4j.Logger;
@@ -51,6 +52,25 @@ public class EventController {
     public ResponseEntity<Void> finishEvent(@PathVariable UUID id) {
         eventService.finishEvent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{eventId}/join/{userId}")
+    public ResponseEntity<Void> joinEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
+        eventService.joinEvent(eventId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Transactional
+    @DeleteMapping("/{eventId}/leave/{userId}")
+    public ResponseEntity<Void> leaveEvent(@PathVariable UUID eventId, @PathVariable UUID userId) {
+        eventService.leaveEvent(eventId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<List<EventDTO>> getEventsByTeam(@PathVariable UUID teamId) {
+        List<EventDTO> events = eventService.getEventsByTeam(teamId);
+        return ResponseEntity.ok(events);
     }
 
     @PostMapping("/{eventId}/participate/{userId}")
