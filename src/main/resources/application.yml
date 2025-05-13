@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/cleanup_db  # ← заменили 'postgres' на 'localhost'
+    url: jdbc:postgresql://localhost:5432/test  # ← заменили 'postgres' на 'localhost'
     username: postgres
-    password: itsme
+    password: admin
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -32,11 +32,12 @@ management:
       exposure:
         include: health,info
   metrics:
-    export:
-      prometheus:
-        enabled: false  # ← отключили Prometheus
     enable:
       all: false
+  prometheus:
+    metrics:
+      export:
+        enabled: false
 
 logging:
   level:
