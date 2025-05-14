@@ -1,60 +1,64 @@
 package org.example.Dto;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.validation.constraints.*;
 
 import java.util.UUID;
 import java.util.List;
 
 public class EventDTO {
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "Title is required")
+    @Size(max = 100, message = "Title must be at most 100 characters")
     private String title;
 
-    @Size(max = 500)
+    @Size(max = 500, message = "Description must be at most 500 characters")
     private String description;
 
-    @NotBlank
+    @NotBlank(message = "Location name is required")
+    @Size(max = 100, message = "Location name must be at most 100 characters")
     private String locationName;
 
-    @DecimalMin(value = "-90.0") @DecimalMax(value = "90.0")
+    @DecimalMin(value = "-90.0", message = "Latitude must be ≥ -90.0")
+    @DecimalMax(value = "90.0", message = "Latitude must be ≤ 90.0")
     private double latitude;
 
-    @DecimalMin(value = "-180.0") @DecimalMax(value = "180.0")
+    @DecimalMin(value = "-180.0", message = "Longitude must be ≥ -180.0")
+    @DecimalMax(value = "180.0", message = "Longitude must be ≤ 180.0")
     private double longitude;
 
-    @NotBlank
+    @NotBlank(message = "Date and time are required")
     private String dateTime;
 
-    @NotNull
+    @NotNull(message = "Creator ID is required")
     private UUID creatorId;
 
     private boolean isFavorite;
 
     private UUID teamId;
 
-    private List<@NotBlank String> imageUri;
+    @Size(max = 10, message = "No more than 10 images allowed")
+    private List<@NotBlank(message = "Image URI must not be blank") String> imageUri;
 
     private boolean verified;
 
-    @Size(max = 300)
+    @Size(max = 300, message = "Confirmation comment must be at most 300 characters")
     private String confirmationComment;
 
     private boolean isFinished;
 
     private String teamName;
 
-    @Min(0)
+    @Min(value = 0, message = "Participant count cannot be negative")
     private int participantCount;
 
-    private List<@NotBlank String> participant;
+    private List<@NotBlank(message = "Participant name must not be blank") String> participant;
 
     private boolean rejected;
 
-    public EventDTO(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, UUID creatorId, boolean isFavorite, UUID teamId, List<String> imageUri, boolean verified, String confirmationComment, boolean isFinished, String teamName, int participantCount, List<String> participant, boolean rejected) {
+    public EventDTO(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, UUID creatorId, boolean isFavorite, UUID teamId, List<@NotBlank(message = "Image URI must not be blank") String> imageUri, boolean verified, String confirmationComment, boolean isFinished, String teamName, int participantCount, List<@NotBlank(message = "Participant name must not be blank") String> participant, boolean rejected) {
         this.id = id;
         this.title = title;
         this.description = description;

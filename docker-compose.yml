@@ -1,109 +1,109 @@
-#version: "3.8"
-#
-#services:
-#  app:
-#    container_name: app
-#    build: .
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - postgres
-#      - redis
-#      - prometheus
-#      - elasticsearch
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=default
-#    networks:
-#      - backend
-#    volumes:
-#      - ./target/your-app.jar:/app.jar
-#      - ./logs:/logs
-#
-#  postgres:
-#    image: postgres:15
-#    environment:
-#      POSTGRES_DB: cleanup_db
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: itsme
-#    ports:
-#      - "5432:5432"
-#    networks:
-#      - backend
-#
-#  redis:
-#    image: redis:7
-#    ports:
-#      - "6379:6379"
-#    networks:
-#      - backend
-#
-#  prometheus:
-#    image: prom/prometheus
-#    container_name: prometheus
-#    ports:
-#      - "9090:9090"
-#    volumes:
-#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-#    command:
-#      - "--config.file=/etc/prometheus/prometheus.yml"
-#    networks:
-#      - backend
-#
-#  grafana:
-#    image: grafana/grafana
-#    container_name: grafana
-#    ports:
-#      - "3000:3000"
-#    depends_on:
-#      - prometheus
-#    volumes:
-#      - grafana-storage:/var/lib/grafana
-#    networks:
-#      - backend
-#
-#  elasticsearch:
-#    image: elasticsearch:8.9.0
-#    environment:
-#      - discovery.type=single-node
-#      - xpack.security.enabled=false
-#    ports:
-#      - "9200:9200"
-#    networks:
-#      - backend
-#    healthcheck:
-#      test: ["CMD-SHELL", "curl -s http://localhost:9200 || exit 1"]
-#      interval: 10s
-#      retries: 10
-#      start_period: 5s
-#      timeout: 5s
-#
-#  logstash:
-#    image: elastic/logstash:8.9.0
-#    container_name: logstash
-#    ports:
-#      - "5044:5044"
-#    volumes:
-#      - ./logstash:/usr/share/logstash/pipeline
-#      - ./logs:/logs
-#    depends_on:
-#      elasticsearch:
-#        condition: service_healthy
-#    networks:
-#      - backend
-#
-#  kibana:
-#    image: kibana:8.9.0
-#    ports:
-#      - "5601:5601"
-#    environment:
-#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-#    networks:
-#      - backend
-#
-#volumes:
-#  pgdata:
-#  grafana-storage:
-#
-#networks:
-#  backend:
-#    driver: bridge
+version: "3.8"
+
+services:
+  app:
+    container_name: app
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+      - prometheus
+      - elasticsearch
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    networks:
+      - backend
+    volumes:
+      - ./target/your-app.jar:/app.jar
+      - ./logs:/logs
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cleanup_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: itsme
+    ports:
+      - "5433:5432"
+    networks:
+      - backend
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - backend
+
+  elasticsearch:
+    image: elasticsearch:8.9.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 5s
+      timeout: 5s
+
+  logstash:
+    image: elastic/logstash:8.9.0
+    container_name: logstash
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash:/usr/share/logstash/pipeline
+      - ./logs:/logs
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - backend
+
+  kibana:
+    image: kibana:8.9.0
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+  grafana-storage:
+
+networks:
+  backend:
+    driver: bridge
