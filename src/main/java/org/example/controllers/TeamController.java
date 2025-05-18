@@ -1,12 +1,14 @@
 package org.example.controllers;
 
 import org.example.Dto.TeamDTO;
+import org.example.Dto.TeamTopDTO;
 import org.example.Dto.UserDTO;
 import org.example.services.TeamService;
 import org.example.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -80,4 +82,22 @@ public class TeamController {
         logger.info("Found {} users for team {}", users.size(), teamId);
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/top/week")
+    public List<TeamTopDTO> getTopTeamsWeek() {
+        LocalDateTime now = LocalDateTime.now();
+        return teamService.getTopTeamsBetween(now.minusWeeks(1), now);
+    }
+
+    @GetMapping("/top/month")
+    public List<TeamTopDTO> getTopTeamsMonth() {
+        LocalDateTime now = LocalDateTime.now();
+        return teamService.getTopTeamsBetween(now.minusMonths(1), now);
+    }
+
+    @GetMapping("/top/all")
+    public List<TeamTopDTO> getTopTeamsAllTime() {
+        return teamService.getTopTeamsBetween(LocalDateTime.MIN, LocalDateTime.now());
+    }
+
 }

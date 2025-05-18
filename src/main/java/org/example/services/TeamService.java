@@ -1,12 +1,15 @@
 package org.example.services;
 
 import org.example.Dto.TeamDTO;
+import org.example.Dto.TeamTopDTO;
 import org.example.Dto.UserDTO;
 import org.example.mappers.TeamMapper;
 import org.example.models.Event;
 import org.example.models.Team;
 import org.example.models.User;
+import org.example.models.UserEventCrossRef;
 import org.example.repositories.TeamRepository;
+import org.example.repositories.UserEventCrossRefRepository;
 import org.example.repositories.UserRepository;
 import org.example.repositories.EventRepository;
 import org.slf4j.Logger;
@@ -14,9 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,17 +31,19 @@ public class TeamService {
     private final TeamMapper teamMapper;
     private final EventRepository eventRepository;
     private final AchievementService achievementService;
+    private final UserEventCrossRefRepository userEventCrossRefRepository;
 
     public TeamService(TeamRepository teamRepository,
                        UserRepository userRepository,
                        TeamMapper teamMapper,
                        EventRepository eventRepository,
-                       AchievementService achievementService) {
+                       AchievementService achievementService, UserEventCrossRefRepository userEventCrossRefRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.teamMapper = teamMapper;
         this.eventRepository = eventRepository;
         this.achievementService = achievementService;
+        this.userEventCrossRefRepository = userEventCrossRefRepository;
     }
 
     @Cacheable("teams")
@@ -122,5 +126,33 @@ public class TeamService {
         user.setTeam(null);
         userRepository.save(user);
         logger.info("User {} left the team", userId);
+    }
+
+    public List<TeamTopDTO> getTopTeamsBetween(LocalDateTime from, LocalDateTime to) {
+        List<UserEventCrossRef> refs = userEventCrossRefRepository.findAll();
+
+        Map<UUID, Integer> teamPoints = new HashMap<>();
+        Map<UUID, String> teamNames = new HashMap<>();
+
+        for (UserEventCrossRef ref : refs) {
+            try {
+                LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
+                if (eventTime.isAfter(from) && eventTime.isBefore(to)) {
+                    User user = ref.getUser();
+                    if (user.getTeam() != null) {
+                        UUID teamId = user.getTeam().getId();
+                        int userPoints = user.getPoints();
+                        teamPoints.put(teamId, teamPoints.getOrDefault(teamId, 0) + userPoints);
+                        teamNames.putIfAbsent(teamId, user.getTeam().getName());
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        return teamPoints.entrySet().stream()
+                .map(e -> new TeamTopDTO(teamNames.get(e.getKey()), e.getValue()))
+                .sorted(Comparator.comparingInt(TeamTopDTO::getTotalPoints).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
     }
 }

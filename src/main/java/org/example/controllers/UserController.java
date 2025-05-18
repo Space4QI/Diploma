@@ -1,10 +1,12 @@
 package org.example.controllers;
 
 import org.example.Dto.UserDTO;
+import org.example.Dto.UserTopDTO;
 import org.example.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -75,10 +77,32 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/top/week")
+    public List<UserTopDTO> getTopUsersWeek() {
+        LocalDateTime now = LocalDateTime.now();
+        return userService.getTopUsersBetween(now.minusWeeks(1), now);
+    }
+
+    @GetMapping("/top/month")
+    public List<UserTopDTO> getTopUsersMonth() {
+        LocalDateTime now = LocalDateTime.now();
+        return userService.getTopUsersBetween(now.minusMonths(1), now);
+    }
+
+    @GetMapping("/top/all")
+    public List<UserTopDTO> getTopUsersAllTime() {
+        return userService.getTopUsersBetween(LocalDateTime.MIN, LocalDateTime.now());
+    }
+
     @GetMapping("/profile")
     public String profile() {
         logger.info("GET /users/profile - profile accessed");
         return "Доступ к профилю пользователя";
+    }
+
+    @GetMapping("/eco-hero")
+    public UserTopDTO getEcoHeroOfTheWeek() {
+        return userService.getEcoHeroOfTheWeek();
     }
 
     @PostMapping("/join-team")
