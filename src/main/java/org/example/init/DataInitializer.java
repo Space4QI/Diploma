@@ -2,10 +2,7 @@ package org.example.init;
 
 import jakarta.annotation.PostConstruct;
 import org.example.models.*;
-import org.example.repositories.AchievementRepository;
-import org.example.repositories.EventRepository;
-import org.example.repositories.TeamRepository;
-import org.example.repositories.UserRepository;
+import org.example.repositories.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -20,15 +17,17 @@ public class DataInitializer {
     private final EventRepository eventRepository;
     private final AchievementRepository achievementRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserEventRepository userEventRepository;
 
     public DataInitializer(UserRepository userRepository, TeamRepository teamRepository,
                            EventRepository eventRepository, AchievementRepository achievementRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, UserEventRepository userEventRepository) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.eventRepository = eventRepository;
         this.achievementRepository = achievementRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userEventRepository = userEventRepository;
     }
 
     @PostConstruct
@@ -106,7 +105,7 @@ public class DataInitializer {
         event.setLocationName("Парк Победы");
         event.setLatitude(55.751244);
         event.setLongitude(37.618423);
-        event.setDateTime("2025-05-10T10:00");
+        event.setDateTime("2025-05-19T10:00");
         event.setCreator(organizer);
         event.setFavorite(false);
         event.setFinished(false);
@@ -116,8 +115,11 @@ public class DataInitializer {
         event.setParticipantCount(3);
         event.setConfirmationComment("Чисто");
         event.setImageUri(List.of("img/clean1.jpg", "img/clean2.jpg", "img/clean3.jpg"));
-        event.setTeams(Set.of(красные)); // ← замена здесь
+        event.setTeams(Set.of(красные));
         eventRepository.save(event);
+
+        UserEventCrossRef ref = new UserEventCrossRef(user, event);
+        userEventRepository.save(ref);
 
         // Достижение
         Achievement achievement = new Achievement();

@@ -4,7 +4,8 @@ import org.example.Dto.ActivityDTO;
 import org.example.models.Event;
 import org.example.models.User;
 import org.example.models.UserEventCrossRef;
-import org.example.repositories.UserEventCrossRefRepository;
+import org.example.repositories.UserEventRepository;
+import org.example.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,43 +15,37 @@ import java.util.stream.Collectors;
 @Service
 public class FeedService {
 
-    private final UserEventCrossRefRepository userEventCrossRefRepository;
+    private final UserEventRepository userEventRepository;
+    private final UserRepository userRepository;
 
-    public FeedService(UserEventCrossRefRepository userEventCrossRefRepository) {
-        this.userEventCrossRefRepository = userEventCrossRefRepository;
+    public FeedService(UserEventRepository userEventRepository, UserRepository userRepository) {
+        this.userEventRepository = userEventRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<ActivityDTO> getRecentActivities(UUID currentUserId) {
+    public List<ActivityDTO> getRecentActivities(UUID userId) {
         List<ActivityDTO> activities = new ArrayList<>();
 
-        for (UserEventCrossRef ref : userEventCrossRefRepository.findAll()) {
-            User user = ref.getUser();
-            Event event = ref.getEvent();
-
-            try {
-                LocalDateTime time = LocalDateTime.parse(event.getDateTime());
-                activities.add(new ActivityDTO(
-                        user.getNickname() + " присоединился к событию \"" + event.getTitle() + "\"",
-                        time.toString()
-                ));
-            } catch (Exception ignored) {
+        // 1. Присоединился к мероприятию
+        for (UserEventCrossRef ref : userEventRepository.findAllWithUserAndEvent()) {
+            if (!ref.getUser().getId().equals(userId)) {
+                try {
+                    LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
+                    activities.add(new ActivityDTO(
+                            ref.getUser().getNickname() + " присоединился к мероприятию \"" + ref.getEvent().getTitle() + "\"",
+                            eventTime.toString()
+                    ));
+                } catch (Exception ignored) {}
             }
-
         }
 
-        for (UserEventCrossRef ref : userEventCrossRefRepository.findAll()) {
-            Event event = ref.getEvent();
-            if (event.isCompleted() && event.isVerified()) {
-                try {
-                    LocalDateTime time = LocalDateTime.parse(event.getDateTime());
-                    event.getTeams().forEach(team -> {
-                        activities.add(new ActivityDTO(
-                                "Команда \"" + team.getName() + "\" завершила событие \"" + event.getTitle() + "\"",
-                                time.toString()
-                        ));
-                    });
-                } catch (Exception ignored) {
-                }
+        // 2. Присоединился к команде
+        for (User user : userRepository.findAll()) {
+            if (!user.getId().equals(userId) && user.getTeam() != null) {
+                activities.add(new ActivityDTO(
+                        user.getNickname() + " вступил в команду \"" + user.getTeam().getName() + "\"",
+                        LocalDateTime.now().toString()  // если нет даты присоединения
+                ));
             }
         }
 
@@ -59,4 +54,6 @@ public class FeedService {
                 .limit(3)
                 .collect(Collectors.toList());
     }
+
+
 }

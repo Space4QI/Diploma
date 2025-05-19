@@ -4,10 +4,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public class TeamDTO {
+public class TeamDTO implements Serializable {
     private UUID id;
 
     @NotBlank(message = "Team name is required")

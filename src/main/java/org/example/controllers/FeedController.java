@@ -2,10 +2,7 @@ package org.example.controllers;
 
 import org.example.Dto.ActivityDTO;
 import org.example.services.FeedService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,8 +17,8 @@ public class FeedController {
         this.feedService = feedService;
     }
 
-    @GetMapping("/recent")
-    public List<ActivityDTO> getRecent(@RequestParam UUID userId) {
+    @GetMapping("/feed/{userId}")
+    public List<ActivityDTO> getRecent(@PathVariable UUID userId) {
         return feedService.getRecentActivities(userId);
     }
 }

@@ -6,7 +6,7 @@ import org.example.mappers.UserMapper;
 import org.example.models.Role;
 import org.example.models.User;
 import org.example.models.UserEventCrossRef;
-import org.example.repositories.UserEventCrossRefRepository;
+import org.example.repositories.UserEventRepository;
 import org.example.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +24,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final UserEventCrossRefRepository userEventCrossRefRepository;
+    private final UserEventRepository userEventRepository;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, UserEventCrossRefRepository userEventCrossRefRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, UserEventRepository userEventRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.userEventCrossRefRepository = userEventCrossRefRepository;
+        this.userEventRepository = userEventRepository;
     }
 
     @Cacheable("users_all")
@@ -111,22 +111,41 @@ public class UserService {
     }
 
     public List<UserTopDTO> getTopUsersBetween(LocalDateTime from, LocalDateTime to) {
-        List<UserEventCrossRef> refs = userEventCrossRefRepository.findAll();
-
+        List<UserEventCrossRef> refs = userEventRepository.findAllWithUserAndEvent();
         Map<UUID, Integer> pointsMap = new HashMap<>();
+        from = from.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        to = to.withHour(23).withMinute(59).withSecond(59).withNano(999_999_999);
+        System.out.println("FROM: " + from);
+        System.out.println("TO: " + to);
 
+        System.out.println("TOTAL refs: " + refs.size());
         for (UserEventCrossRef ref : refs) {
             try {
-                LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
-                if (eventTime.isAfter(from) && eventTime.isBefore(to)) {
+                String rawDateTime = ref.getEvent().getDateTime();
+                LocalDateTime eventTime = LocalDateTime.parse(rawDateTime);
+                System.out.println("------------");
+                System.out.println("User: " + ref.getUser().getNickname());
+                System.out.println("User points: " + ref.getUser().getPoints());
+                System.out.println("Event: " + ref.getEvent().getTitle());
+                System.out.println("Event datetime: " + rawDateTime);
+                System.out.println("Parsed eventTime: " + eventTime);
+
+                boolean inRange = !eventTime.isBefore(from) && !eventTime.isAfter(to);
+                System.out.println("inRange: " + inRange);
+
+                if (inRange) {
                     UUID userId = ref.getUser().getId();
                     int userPoints = ref.getUser().getPoints();
                     pointsMap.put(userId, Math.max(pointsMap.getOrDefault(userId, 0), userPoints));
                 }
-            } catch (Exception ignored) {}
+
+            } catch (Exception e) {
+                System.out.println("FAILED TO PARSE: " + ref.getEvent().getDateTime());
+                e.printStackTrace();
+            }
         }
 
-        return refs.stream()
+        List<UserTopDTO> result = refs.stream()
                 .map(UserEventCrossRef::getUser)
                 .distinct()
                 .filter(u -> pointsMap.containsKey(u.getId()))
@@ -134,13 +153,16 @@ public class UserService {
                 .sorted(Comparator.comparingInt(UserTopDTO::getPoints).reversed())
                 .limit(10)
                 .collect(Collectors.toList());
+
+        System.out.println("FINAL RESULT SIZE: " + result.size());
+        return result;
     }
 
     public UserTopDTO getEcoHeroOfTheWeek() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime weekAgo = now.minusWeeks(1);
 
-        List<UserEventCrossRef> refs = userEventCrossRefRepository.findAll();
+        List<UserEventCrossRef> refs = userEventRepository.findAll();
 
         Map<UUID, Integer> pointsMap = new HashMap<>();
         Map<UUID, Integer> eventCountMap = new HashMap<>();

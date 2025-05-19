@@ -2,14 +2,13 @@ package org.example.services;
 
 import org.example.Dto.TeamDTO;
 import org.example.Dto.TeamTopDTO;
-import org.example.Dto.UserDTO;
 import org.example.mappers.TeamMapper;
 import org.example.models.Event;
 import org.example.models.Team;
 import org.example.models.User;
 import org.example.models.UserEventCrossRef;
 import org.example.repositories.TeamRepository;
-import org.example.repositories.UserEventCrossRefRepository;
+import org.example.repositories.UserEventRepository;
 import org.example.repositories.UserRepository;
 import org.example.repositories.EventRepository;
 import org.slf4j.Logger;
@@ -31,19 +30,19 @@ public class TeamService {
     private final TeamMapper teamMapper;
     private final EventRepository eventRepository;
     private final AchievementService achievementService;
-    private final UserEventCrossRefRepository userEventCrossRefRepository;
+    private final UserEventRepository userEventRepository;
 
     public TeamService(TeamRepository teamRepository,
                        UserRepository userRepository,
                        TeamMapper teamMapper,
                        EventRepository eventRepository,
-                       AchievementService achievementService, UserEventCrossRefRepository userEventCrossRefRepository) {
+                       AchievementService achievementService, UserEventRepository userEventRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.teamMapper = teamMapper;
         this.eventRepository = eventRepository;
         this.achievementService = achievementService;
-        this.userEventCrossRefRepository = userEventCrossRefRepository;
+        this.userEventRepository = userEventRepository;
     }
 
     @Cacheable("teams")
@@ -129,7 +128,7 @@ public class TeamService {
     }
 
     public List<TeamTopDTO> getTopTeamsBetween(LocalDateTime from, LocalDateTime to) {
-        List<UserEventCrossRef> refs = userEventCrossRefRepository.findAll();
+        List<UserEventCrossRef> refs = userEventRepository.findAll();
 
         Map<UUID, Integer> teamPoints = new HashMap<>();
         Map<UUID, String> teamNames = new HashMap<>();
