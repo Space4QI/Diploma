@@ -23,28 +23,26 @@ public class FeedService {
         this.userRepository = userRepository;
     }
 
-    public List<ActivityDTO> getRecentActivities(UUID userId) {
+    public List<ActivityDTO> getRecentActivities() {
         List<ActivityDTO> activities = new ArrayList<>();
 
-        // 1. Присоединился к мероприятию
+        // Все присоединения к мероприятиям
         for (UserEventCrossRef ref : userEventRepository.findAllWithUserAndEvent()) {
-            if (!ref.getUser().getId().equals(userId)) {
-                try {
-                    LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
-                    activities.add(new ActivityDTO(
-                            ref.getUser().getNickname() + " присоединился к мероприятию \"" + ref.getEvent().getTitle() + "\"",
-                            eventTime.toString()
-                    ));
-                } catch (Exception ignored) {}
-            }
+            try {
+                LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
+                activities.add(new ActivityDTO(
+                        ref.getUser().getNickname() + " присоединился к мероприятию \"" + ref.getEvent().getTitle() + "\"",
+                        eventTime.toString()
+                ));
+            } catch (Exception ignored) {}
         }
 
-        // 2. Присоединился к команде
+        // Все присоединения к командам
         for (User user : userRepository.findAll()) {
-            if (!user.getId().equals(userId) && user.getTeam() != null) {
+            if (user.getTeam() != null) {
                 activities.add(new ActivityDTO(
                         user.getNickname() + " вступил в команду \"" + user.getTeam().getName() + "\"",
-                        LocalDateTime.now().toString()  // если нет даты присоединения
+                        LocalDateTime.now().toString()  // заглушка, если нет даты
                 ));
             }
         }
@@ -54,6 +52,7 @@ public class FeedService {
                 .limit(3)
                 .collect(Collectors.toList());
     }
+
 
 
 }

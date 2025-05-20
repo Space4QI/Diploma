@@ -66,6 +66,10 @@ public class AchievementService {
         if (participationCount >= 1) {
             assignIfNotExists(user, "Первый шаг");
         }
+        // Ачивка за вступление в команду
+        if (user.getTeam() != null) {
+            assignIfNotExists(user, "Присоединился к команде");
+        }
     }
 
     private void assignIfNotExists(User user, String achievementTitle) {

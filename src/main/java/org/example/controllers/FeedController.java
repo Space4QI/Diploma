@@ -17,8 +17,8 @@ public class FeedController {
         this.feedService = feedService;
     }
 
-    @GetMapping("/feed/{userId}")
-    public List<ActivityDTO> getRecent(@PathVariable UUID userId) {
-        return feedService.getRecentActivities(userId);
+    @GetMapping("/feed")
+    public List<ActivityDTO> getRecent() {
+        return feedService.getRecentActivities();
     }
 }
