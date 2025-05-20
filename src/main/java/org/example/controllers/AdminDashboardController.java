@@ -31,13 +31,15 @@ public class AdminDashboardController {
         model.addAttribute("teams", adminService.getAllTeams());
         model.addAttribute("events", adminService.getEventsToVerify());
         model.addAttribute("users", userService.getAll());
+        System.out.println(">>> ADMIN PAGE RENDERED");
         logger.info("Admin dashboard model populated with teams, events, users");
         return "admin";
     }
 
-    @PostMapping("/add-points")
+    @PostMapping("/add-points-to-team")
     public String addPoints(@RequestParam UUID teamId,
                             @RequestParam int points) {
+        System.out.println(">>> ADD POINTS TRIGGERED");
         logger.info("[POST /admin/add-points] teamId={}, points={}", teamId, points);
         adminService.addPointsToTeam(teamId, points);
         return "redirect:/admin";

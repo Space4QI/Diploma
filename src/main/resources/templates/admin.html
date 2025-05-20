@@ -13,7 +13,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">Начисление очков команде</h5>
-            <form th:action="@{/admin/add-points}" method="post" class="row g-3">
+            <form th:action="@{/admin/add-points-to-team}" method="post" class="row g-3">
                 <div class="col-md-4">
                     <select name="teamId" class="form-select" required>
                         <option th:each="team : ${teams}"

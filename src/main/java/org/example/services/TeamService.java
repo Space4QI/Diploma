@@ -128,30 +128,10 @@ public class TeamService {
     }
 
     public List<TeamTopDTO> getTopTeamsBetween(LocalDateTime from, LocalDateTime to) {
-        List<UserEventCrossRef> refs = userEventRepository.findAll();
-
-        Map<UUID, Integer> teamPoints = new HashMap<>();
-        Map<UUID, String> teamNames = new HashMap<>();
-
-        for (UserEventCrossRef ref : refs) {
-            try {
-                LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
-                if (eventTime.isAfter(from) && eventTime.isBefore(to)) {
-                    User user = ref.getUser();
-                    if (user.getTeam() != null) {
-                        UUID teamId = user.getTeam().getId();
-                        int userPoints = user.getPoints();
-                        teamPoints.put(teamId, teamPoints.getOrDefault(teamId, 0) + userPoints);
-                        teamNames.putIfAbsent(teamId, user.getTeam().getName());
-                    }
-                }
-            } catch (Exception ignored) {}
-        }
-
-        return teamPoints.entrySet().stream()
-                .map(e -> new TeamTopDTO(teamNames.get(e.getKey()), e.getValue()))
+        return teamRepository.findAll().stream()
+                .map(team -> new TeamTopDTO(team.getName(), team.getPoints()))
                 .sorted(Comparator.comparingInt(TeamTopDTO::getTotalPoints).reversed())
                 .limit(10)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

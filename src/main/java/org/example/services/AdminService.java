@@ -71,7 +71,9 @@ public class AdminService {
                     logger.warn("Team not found: {}", teamId);
                     return new RuntimeException("Team not found");
                 });
+        System.out.println("BEFORE: " + team.getPoints());
         team.setPoints(team.getPoints() + points);
+        System.out.println("AFTER: " + team.getPoints());
         teamRepository.save(team);
         logger.info("Team {} now has {} points", teamId, team.getPoints());
     }
@@ -89,6 +91,13 @@ public class AdminService {
         event.setConfirmationComment(comment);
         eventRepository.save(event);
         logger.info("Event {} verified", eventId);
+
+        for (Team team : event.getTeams()) {
+            team.setPoints(team.getPoints() + teamPoints);
+            teamRepository.save(team);
+            logger.info("Added {} points to team {} during verification", teamPoints, team.getId());
+        }
+
     }
 
     public void addPointsToParticipant(UUID eventId, String participantName, int points) {
