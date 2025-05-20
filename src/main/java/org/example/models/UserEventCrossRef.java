@@ -24,6 +24,7 @@ public class UserEventCrossRef {
     public UserEventCrossRef(User user, Event event) {
         this.user = user;
         this.event = event;
+        this.id = new UserEventKey(user.getId(), event.getId());
     }
 
     public UserEventKey getId() {

@@ -7,6 +7,7 @@ import org.example.models.UserEventCrossRef;
 import org.example.repositories.UserEventRepository;
 import org.example.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,6 +26,7 @@ public class FeedService {
 
     public List<ActivityDTO> getRecentActivities() {
         List<ActivityDTO> activities = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         // Все присоединения к мероприятиям
         for (UserEventCrossRef ref : userEventRepository.findAllWithUserAndEvent()) {
@@ -32,7 +34,7 @@ public class FeedService {
                 LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
                 activities.add(new ActivityDTO(
                         ref.getUser().getNickname() + " присоединился к мероприятию \"" + ref.getEvent().getTitle() + "\"",
-                        eventTime.toString()
+                        eventTime.format(formatter)
                 ));
             } catch (Exception ignored) {}
         }
@@ -42,7 +44,7 @@ public class FeedService {
             if (user.getTeam() != null) {
                 activities.add(new ActivityDTO(
                         user.getNickname() + " вступил в команду \"" + user.getTeam().getName() + "\"",
-                        LocalDateTime.now().toString()  // заглушка, если нет даты
+                        LocalDateTime.now().format(formatter)  // заглушка, если нет даты
                 ));
             }
         }
@@ -52,7 +54,5 @@ public class FeedService {
                 .limit(3)
                 .collect(Collectors.toList());
     }
-
-
 
 }

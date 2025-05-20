@@ -11,6 +11,7 @@ import org.example.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,11 +26,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UserEventRepository userEventRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, UserEventRepository userEventRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, UserEventRepository userEventRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.userEventRepository = userEventRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Cacheable("users_all")
@@ -57,10 +60,18 @@ public class UserService {
 
     public UserDTO save(UserDTO dto) {
         logger.info("Saving new user: {}", dto);
-        User user = userRepository.save(userMapper.toEntity(dto));
+
+        User user = userMapper.toEntity(dto);
+
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        user = userRepository.save(user);
         logger.info("User saved with ID: {}", user.getId());
         return userMapper.toDTO(user);
     }
+
 
     public void assignRole(UUID userId, String role) {
         logger.info("Assigning role '{}' to user {}", role, userId);

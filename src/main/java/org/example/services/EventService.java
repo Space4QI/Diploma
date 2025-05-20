@@ -159,13 +159,30 @@ public class EventService {
 
     public void finishEvent(UUID id) {
         log.info("Marking event {} as finished", id);
+
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Event not found: {}", id);
                     return new RuntimeException("Event not found");
                 });
-        event.setFinished(true);
-        eventRepository.save(event);
-        log.info("Event {} marked as finished", id);
+
+        if (!event.isCompleted()) {
+            event.setCompleted(true);
+            eventRepository.save(event);
+            log.info("Event {} marked as completed", id);
+
+            List<UserEventCrossRef> participants = userEventRepository.findByEventId(event.getId());
+            for (UserEventCrossRef ref : participants) {
+                User user = ref.getUser();
+                user.setPoints(user.getPoints() + 10);
+                userRepository.save(user);
+                log.info("Assigned points to user {} for completing event {}", user.getId(), event.getId());
+
+                achievementService.checkAndAssign(user);
+            }
+        } else {
+            log.info("Event {} already marked as completed", id);
+        }
     }
+
 }

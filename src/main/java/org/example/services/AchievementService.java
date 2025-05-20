@@ -63,12 +63,34 @@ public class AchievementService {
         long participationCount = userEventRepository.countByUser_Id(user.getId());
         logger.info("User {} has {} participations", user.getNickname(), participationCount);
 
+        // 1. Первое участие
         if (participationCount >= 1) {
-            assignIfNotExists(user, "Первый шаг");
+            assignIfNotExists(user, "Первое участие");
         }
-        // Ачивка за вступление в команду
+
+        // 2. Постоянный участник (5+ событий)
+        if (participationCount >= 5) {
+            assignIfNotExists(user, "Постоянный участник");
+        }
+
+        // 3. Вступил в команду
         if (user.getTeam() != null) {
             assignIfNotExists(user, "Присоединился к команде");
+        }
+
+        // 4. Твой первый ивент (создан 1)
+        if (user.getEventCount() == 1) {
+            assignIfNotExists(user, "Твой первый ивент");
+        }
+
+        // 5. Организатор по жизни (создано 5+)
+        if (user.getEventCount() >= 5) {
+            assignIfNotExists(user, "Организатор по жизни");
+        }
+
+        // 6. Первая сотня (набрал 100+ очков)
+        if (user.getPoints() >= 100) {
+            assignIfNotExists(user, "Первая сотня");
         }
     }
 
