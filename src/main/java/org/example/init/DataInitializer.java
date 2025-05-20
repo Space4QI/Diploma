@@ -108,8 +108,7 @@ public class DataInitializer {
         event.setDateTime("2025-05-19T10:00");
         event.setCreator(organizer);
         event.setFavorite(false);
-        event.setFinished(false);
-        event.setCompleted(true);
+        event.setCompleted(false);
         event.setVerified(false);
         event.setRejected(false);
         event.setParticipantCount(3);

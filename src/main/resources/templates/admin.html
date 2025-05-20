@@ -9,14 +9,16 @@
 <div class="container">
     <h2 class="mb-4 text-center">Админ-панель</h2>
 
-    <!-- Блок начисления очков -->
+    <!-- Блок начисления очков команде -->
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Начисление очков</h5>
+            <h5 class="card-title">Начисление очков команде</h5>
             <form th:action="@{/admin/add-points}" method="post" class="row g-3">
                 <div class="col-md-4">
                     <select name="teamId" class="form-select" required>
-                        <option th:each="team : ${teams}" th:value="${team.id}" th:text="${team.name + ' (' + team.points + ' очков)'}"></option>
+                        <option th:each="team : ${teams}"
+                                th:value="${team.id}"
+                                th:text="${team.name + ' (' + team.points + ' очков)'}"></option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -28,6 +30,29 @@
             </form>
         </div>
     </div>
+
+    <!-- Блок начисления очков пользователю -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Начисление очков пользователю</h5>
+            <form th:action="@{/admin/add-points-to-user}" method="post" class="row g-3">
+                <div class="col-md-4">
+                    <select name="userId" class="form-select" required>
+                        <option th:each="user : ${users}"
+                                th:value="${user.id}"
+                                th:text="|${user.nickname} (${user.points} очков)|">Пользователь</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" name="points" class="form-control" placeholder="Сколько очков?" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-success w-100">Начислить очки</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <div class="card mb-4">
         <div class="card-body">
@@ -85,24 +110,6 @@
                     <ul th:if="${event.participant != null}">
                         <li th:each="participant : ${event.participant}" th:text="${participant}">Участник</li>
                     </ul>
-
-                    <form th:action="@{/admin/add-points-to-participant}" method="post" class="mt-3">
-                        <input type="hidden" name="eventId" th:value="${event.id}" />
-                        <div class="row g-2 align-items-end">
-                            <div class="col-md-6">
-                                <select name="participantName" class="form-select" required>
-                                    <option th:each="p : ${event.participant}" th:value="${p}" th:text="${p}">Участник</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number" name="points" class="form-control" placeholder="Очки" required />
-                            </div>
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-warning w-100">Очки участнику</button>
-                            </div>
-                        </div>
-                    </form>
-
 
                     <div th:if="${event.confirmationComment != null}" class="mb-2">
                         <strong>Комментарий:</strong> <span th:text="${event.confirmationComment}"></span>

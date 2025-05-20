@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,6 @@ public class Event extends BaseEntity {
     private double longitude;
     private String dateTime;
     private boolean isFavorite;
-    private boolean isFinished;
     @ElementCollection
     private List<String> imageUri;
     private int participantCount;
@@ -28,7 +28,9 @@ public class Event extends BaseEntity {
     @Column(nullable = false)
     private boolean rejected = false;
 
-    private boolean completed; // Организатор отметил как завершённое
+    private boolean completed;
+
+    private LocalDateTime completedAt;
     private boolean verified;  // Админ проверил
 
     private String confirmationComment;
@@ -49,7 +51,7 @@ public class Event extends BaseEntity {
     @OneToMany(mappedBy = "event")
     private Set<UserEventCrossRef> userRefs;
 
-    public Event(String title, String description, String locationName, double latitude, double longitude, String dateTime, boolean isFavorite, boolean isFinished, List<String> imageUri, int participantCount, List<String> participant, boolean rejected, boolean completed, boolean verified, String confirmationComment, User creator, Set<Team> teams, Set<UserEventCrossRef> userRefs) {
+    public Event(String title, String description, String locationName, double latitude, double longitude, String dateTime, boolean isFavorite, List<String> imageUri, int participantCount, List<String> participant, boolean rejected, boolean completed, LocalDateTime completedAt, boolean verified, String confirmationComment, User creator, Set<Team> teams, Set<UserEventCrossRef> userRefs) {
         this.title = title;
         this.description = description;
         this.locationName = locationName;
@@ -57,12 +59,12 @@ public class Event extends BaseEntity {
         this.longitude = longitude;
         this.dateTime = dateTime;
         this.isFavorite = isFavorite;
-        this.isFinished = isFinished;
         this.imageUri = imageUri;
         this.participantCount = participantCount;
         this.participant = participant;
         this.rejected = rejected;
         this.completed = completed;
+        this.completedAt = completedAt;
         this.verified = verified;
         this.confirmationComment = confirmationComment;
         this.creator = creator;
@@ -128,14 +130,6 @@ public class Event extends BaseEntity {
         isFavorite = favorite;
     }
 
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    public void setFinished(boolean finished) {
-        isFinished = finished;
-    }
-
     public List<String> getImageUri() {
         return imageUri;
     }
@@ -174,6 +168,14 @@ public class Event extends BaseEntity {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
     }
 
     public boolean isVerified() {

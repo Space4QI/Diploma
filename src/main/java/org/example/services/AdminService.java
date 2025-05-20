@@ -4,8 +4,10 @@ import org.example.Dto.EventDTO;
 import org.example.mappers.EventMapper;
 import org.example.models.Event;
 import org.example.models.Team;
+import org.example.models.User;
 import org.example.repositories.EventRepository;
 import org.example.repositories.TeamRepository;
+import org.example.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,13 +25,15 @@ public class AdminService {
     private final EventRepository eventRepository;
     private final TeamRepository teamRepository;
     private final EventMapper eventMapper;
+    private final UserRepository userRepository;
 
     public AdminService(EventRepository eventRepository,
                         TeamRepository teamRepository,
-                        EventMapper eventMapper) {
+                        EventMapper eventMapper, UserRepository userRepository) {
         this.eventRepository = eventRepository;
         this.teamRepository = teamRepository;
         this.eventMapper = eventMapper;
+        this.userRepository = userRepository;
     }
 
     @Cacheable("admin_all_teams")
@@ -85,17 +89,27 @@ public class AdminService {
         event.setConfirmationComment(comment);
         eventRepository.save(event);
         logger.info("Event {} verified", eventId);
-
-        for (Team team : event.getTeams()) {
-            logger.info("Awarding {} points to team {}", teamPoints, team.getId());
-            team.setPoints(team.getPoints() + teamPoints);
-            teamRepository.save(team);
-        }
     }
 
     public void addPointsToParticipant(UUID eventId, String participantName, int points) {
         logger.info("Adding {} points to participant {} in event {}", points, participantName, eventId);
     }
+
+    public void addPointsToUser(UUID userId, int points) {
+        logger.info("Adding {} points to user {}", points, userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    logger.warn("User not found: {}", userId);
+                    return new RuntimeException("User not found");
+                });
+
+        user.setPoints(user.getPoints() + points);
+        userRepository.save(user);
+
+        logger.info("User {} now has {} points", userId, user.getPoints());
+    }
+
 
     public void rejectEvent(UUID eventId, String comment) {
         logger.info("Rejecting event {} with comment: {}", eventId, comment);

@@ -43,6 +43,15 @@ public class AdminDashboardController {
         return "redirect:/admin";
     }
 
+    @PostMapping("/add-points-to-user")
+    public String addPointsToUser(@RequestParam UUID userId,
+                                  @RequestParam int points) {
+        logger.info("[POST /admin/add-points-to-user] userId={}, points={}", userId, points);
+        adminService.addPointsToUser(userId, points);
+        return "redirect:/admin";
+    }
+
+
     @PostMapping("/calculate-top")
     public String calculateTop(Model model) {
         logger.info("[POST /admin/calculate-top] calculateTop called");

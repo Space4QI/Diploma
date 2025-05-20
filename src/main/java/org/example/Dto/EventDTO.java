@@ -3,6 +3,7 @@ package org.example.Dto;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class EventDTO implements Serializable {
     @Size(max = 300, message = "Confirmation comment must be at most 300 characters")
     private String confirmationComment;
 
-    private boolean isFinished;
+    private boolean completed;
 
     private String teamName;
 
@@ -59,7 +60,9 @@ public class EventDTO implements Serializable {
 
     private boolean rejected;
 
-    public EventDTO(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, UUID creatorId, boolean isFavorite, UUID teamId, List<@NotBlank(message = "Image URI must not be blank") String> imageUri, boolean verified, String confirmationComment, boolean isFinished, String teamName, int participantCount, List<@NotBlank(message = "Participant name must not be blank") String> participant, boolean rejected) {
+    private LocalDateTime completedAt;
+
+    public EventDTO(UUID id, String title, String description, String locationName, double latitude, double longitude, String dateTime, UUID creatorId, boolean isFavorite, UUID teamId, List<@NotBlank(message = "Image URI must not be blank") String> imageUri, boolean verified, String confirmationComment, boolean completed, String teamName, int participantCount, List<@NotBlank(message = "Participant name must not be blank") String> participant, boolean rejected, LocalDateTime completedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -73,22 +76,15 @@ public class EventDTO implements Serializable {
         this.imageUri = imageUri;
         this.verified = verified;
         this.confirmationComment = confirmationComment;
-        this.isFinished = isFinished;
+        this.completed = completed;
         this.teamName = teamName;
         this.participantCount = participantCount;
         this.participant = participant;
         this.rejected = rejected;
+        this.completedAt = completedAt;
     }
 
     public EventDTO() {}
-
-    public List<String> getParticipant() {
-        return participant;
-    }
-
-    public void setParticipant(List<String> participant) {
-        this.participant = participant;
-    }
 
     public UUID getId() {
         return id;
@@ -194,12 +190,12 @@ public class EventDTO implements Serializable {
         this.confirmationComment = confirmationComment;
     }
 
-    public boolean isFinished() {
-        return isFinished;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setFinished(boolean finished) {
-        isFinished = finished;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public String getTeamName() {
@@ -218,11 +214,27 @@ public class EventDTO implements Serializable {
         this.participantCount = participantCount;
     }
 
+    public List<String> getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(List<String> participant) {
+        this.participant = participant;
+    }
+
     public boolean isRejected() {
         return rejected;
     }
 
     public void setRejected(boolean rejected) {
         this.rejected = rejected;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
     }
 }

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -132,6 +133,7 @@ public class EventService {
             UserEventCrossRef ref = new UserEventCrossRef();
             ref.setUser(user);
             ref.setEvent(event);
+            ref.setId(new UserEventKey(user.getId(), event.getId()));
             userEventRepository.save(ref);
             log.info("User {} marked as participant in event {}", userId, eventId);
         }
@@ -139,6 +141,7 @@ public class EventService {
         achievementService.checkAndAssign(user);
         log.info("Achievements reassessed for user {}", userId);
     }
+
 
     @Cacheable(value = "events_by_team", key = "#teamId")
     public List<EventDTO> getEventsByTeam(UUID teamId) {
@@ -168,6 +171,9 @@ public class EventService {
 
         if (!event.isCompleted()) {
             event.setCompleted(true);
+            event.setCompletedAt(LocalDateTime.now());
+            eventRepository.save(event);
+
             eventRepository.save(event);
             log.info("Event {} marked as completed", id);
 
