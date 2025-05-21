@@ -57,11 +57,10 @@ public class FeedService {
         for (UserEventCrossRef ref : userEventRepository.findAllWithUserAndEvent()) {
             try {
                 Event event = ref.getEvent();
-                if (event.isCompleted() && !completedEvents.contains(event.getId())) {
-                    LocalDateTime eventTime = LocalDateTime.parse(event.getDateTime());
+                if (event.isCompleted() && ref.getJoinedAt() != null) {
                     activities.add(new ActivityDTO(
                             ref.getUser().getNickname() + " присоединился к мероприятию \"" + event.getTitle() + "\"",
-                            eventTime.format(formatter)
+                            ref.getJoinedAt().format(formatter)
                     ));
                 }
             } catch (Exception ignored) {}

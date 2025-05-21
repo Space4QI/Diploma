@@ -6,6 +6,7 @@ import org.example.repositories.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -117,7 +118,7 @@ public class DataInitializer {
         event.setTeams(Set.of(красные));
         eventRepository.save(event);
 
-        UserEventCrossRef ref = new UserEventCrossRef(user, event);
+        UserEventCrossRef ref = new UserEventCrossRef(user, event, LocalDateTime.now());
         userEventRepository.save(ref);
 
         // Достижение

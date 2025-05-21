@@ -134,6 +134,7 @@ public class EventService {
             ref.setUser(user);
             ref.setEvent(event);
             ref.setId(new UserEventKey(user.getId(), event.getId()));
+            ref.setJoinedAt(LocalDateTime.now());
             userEventRepository.save(ref);
             log.info("User {} marked as participant in event {}", userId, eventId);
         }
