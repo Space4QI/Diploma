@@ -3,6 +3,7 @@ package org.example.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,7 @@ public class User extends BaseEntity {
     private int points;
     private int eventCount;
     private String avatarUri;
+    private LocalDateTime joinedTeamAt;
 
     @JsonIgnore
     @ManyToOne
@@ -31,15 +33,16 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private Set<UserAchievementCrossRef> achievementRefs;
 
-    public User(String name, Role role, String nickname, String phone, String password, int points, int eventCount, String avatarUri, Team team, Set<UserEventCrossRef> eventCrossRefs, Set<UserAchievementCrossRef> achievementRefs) {
+    public User(Role role, String name, String nickname, String phone, String password, int points, int eventCount, String avatarUri, LocalDateTime joinedTeamAt, Team team, Set<UserEventCrossRef> eventCrossRefs, Set<UserAchievementCrossRef> achievementRefs) {
+        this.role = role;
         this.name = name;
         this.nickname = nickname;
         this.phone = phone;
         this.password = password;
-        this.role = role;
         this.points = points;
         this.eventCount = eventCount;
         this.avatarUri = avatarUri;
+        this.joinedTeamAt = joinedTeamAt;
         this.team = team;
         this.eventCrossRefs = eventCrossRefs;
         this.achievementRefs = achievementRefs;
@@ -110,6 +113,14 @@ public class User extends BaseEntity {
 
     public void setAvatarUri(String avatarUri) {
         this.avatarUri = avatarUri;
+    }
+
+    public LocalDateTime getJoinedTeamAt() {
+        return joinedTeamAt;
+    }
+
+    public void setJoinedTeamAt(LocalDateTime joinedTeamAt) {
+        this.joinedTeamAt = joinedTeamAt;
     }
 
     public Team getTeam() {

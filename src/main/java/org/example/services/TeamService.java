@@ -107,7 +107,7 @@ public class TeamService {
                     return new RuntimeException("Team not found");
                 });
 
-        user.setTeam(team);
+        user.setJoinedTeamAt(LocalDateTime.now());
         userRepository.save(user);
         logger.info("User {} joined team {}", userId, teamId);
 

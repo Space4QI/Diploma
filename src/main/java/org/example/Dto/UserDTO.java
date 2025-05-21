@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import org.example.models.Role;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +36,8 @@ public class UserDTO implements Serializable {
     @Size(max = 255, message = "Avatar URI too long")
     private String avatarUri;
 
+    private LocalDateTime joinedTeamAt;
+
     private UUID teamId;
 
     @NotBlank(message = "Password is required")
@@ -47,7 +50,7 @@ public class UserDTO implements Serializable {
 
     private List<AchievementDTO> achievements;
 
-    public UserDTO(UUID id, String name, String nickname, String phone, Role role, int points, int eventCount, String avatarUri, UUID teamId, String password, List<AchievementDTO> achievements) {
+    public UserDTO(UUID id, String name, String nickname, String phone, Role role, int points, int eventCount, String avatarUri, LocalDateTime joinedTeamAt, UUID teamId, String password, List<AchievementDTO> achievements) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;
@@ -56,6 +59,7 @@ public class UserDTO implements Serializable {
         this.points = points;
         this.eventCount = eventCount;
         this.avatarUri = avatarUri;
+        this.joinedTeamAt = joinedTeamAt;
         this.teamId = teamId;
         this.password = password;
         this.achievements = achievements;
@@ -125,6 +129,14 @@ public class UserDTO implements Serializable {
 
     public void setAvatarUri(String avatarUri) {
         this.avatarUri = avatarUri;
+    }
+
+    public LocalDateTime getJoinedTeamAt() {
+        return joinedTeamAt;
+    }
+
+    public void setJoinedTeamAt(LocalDateTime joinedTeamAt) {
+        this.joinedTeamAt = joinedTeamAt;
     }
 
     public UUID getTeamId() {

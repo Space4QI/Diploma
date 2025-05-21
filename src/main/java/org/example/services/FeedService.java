@@ -69,10 +69,10 @@ public class FeedService {
 
         // 3. Вступления в команды
         for (User user : userRepository.findAll()) {
-            if (user.getTeam() != null) {
+            if (user.getTeam() != null && user.getJoinedTeamAt() != null) {
                 activities.add(new ActivityDTO(
                         user.getNickname() + " вступил в команду \"" + user.getTeam().getName() + "\"",
-                        LocalDateTime.now().format(formatter)
+                        user.getJoinedTeamAt().format(formatter)
                 ));
             }
         }
