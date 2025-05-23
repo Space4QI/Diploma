@@ -9,7 +9,8 @@ public class UserLoginDTO {
         this.password = password;
     }
 
-    public UserLoginDTO() {}
+    public UserLoginDTO() {
+    }
 
     public String getPhone() {
         return phone;

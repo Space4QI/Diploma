@@ -35,7 +35,8 @@ public class TeamDTO implements Serializable {
         this.eventIds = eventIds;
     }
 
-    public TeamDTO() {}
+    public TeamDTO() {
+    }
 
 
     public UUID getId() {

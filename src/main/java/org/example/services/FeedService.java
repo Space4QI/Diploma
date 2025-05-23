@@ -8,9 +8,9 @@ import org.example.repositories.EventRepository;
 import org.example.repositories.UserEventRepository;
 import org.example.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,6 @@ public class FeedService {
 
         Set<UUID> completedEvents = new HashSet<>();
 
-        // 1. Обрабатываем мероприятия
         for (Event event : eventRepository.findAll()) {
             try {
                 LocalDateTime startTime = LocalDateTime.parse(event.getDateTime());
@@ -50,10 +49,10 @@ public class FeedService {
                     ));
                 }
 
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
-        // 2. Присоединения к завершённым мероприятиям (если нужно)
         for (UserEventCrossRef ref : userEventRepository.findAllWithUserAndEvent()) {
             try {
                 Event event = ref.getEvent();
@@ -63,10 +62,10 @@ public class FeedService {
                             ref.getJoinedAt().format(formatter)
                     ));
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
-        // 3. Вступления в команды
         for (User user : userRepository.findAll()) {
             if (user.getTeam() != null && user.getJoinedTeamAt() != null) {
                 activities.add(new ActivityDTO(

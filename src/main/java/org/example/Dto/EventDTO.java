@@ -4,8 +4,8 @@ import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 
 public class EventDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -84,7 +84,8 @@ public class EventDTO implements Serializable {
         this.completedAt = completedAt;
     }
 
-    public EventDTO() {}
+    public EventDTO() {
+    }
 
     public UUID getId() {
         return id;

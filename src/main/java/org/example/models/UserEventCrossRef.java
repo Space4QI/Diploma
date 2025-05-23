@@ -37,7 +37,8 @@ public class UserEventCrossRef {
         this.joinedAt = joinedAt;
     }
 
-    public UserEventCrossRef() {}
+    public UserEventCrossRef() {
+    }
 
     public UserEventKey getId() {
         return id;

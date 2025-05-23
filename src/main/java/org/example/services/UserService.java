@@ -190,15 +190,16 @@ public class UserService {
                     eventCountMap.put(userId, eventCountMap.getOrDefault(userId, 0) + 1);
                     nicknameMap.putIfAbsent(userId, user.getNickname());
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         return pointsMap.entrySet().stream()
                 .sorted((a, b) -> {
-                    int cmp = Integer.compare(b.getValue(), a.getValue()); // сначала по очкам
+                    int cmp = Integer.compare(b.getValue(), a.getValue());
                     if (cmp == 0) {
                         return Integer.compare(eventCountMap.getOrDefault(b.getKey(), 0),
-                                eventCountMap.getOrDefault(a.getKey(), 0)); // потом по числу событий
+                                eventCountMap.getOrDefault(a.getKey(), 0));
                     }
                     return cmp;
                 })

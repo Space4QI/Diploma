@@ -32,7 +32,8 @@ public class UserAchievementCrossRef {
         this.achievement = achievement;
     }
 
-    public UserAchievementCrossRef() {}
+    public UserAchievementCrossRef() {
+    }
 
     public UUID getUserId() {
         return userId;

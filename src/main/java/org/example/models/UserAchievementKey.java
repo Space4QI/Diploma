@@ -13,7 +13,8 @@ public class UserAchievementKey implements Serializable {
         this.achievementId = achievementId;
     }
 
-    public UserAchievementKey() {}
+    public UserAchievementKey() {
+    }
 
     public UUID getUserId() {
         return userId;

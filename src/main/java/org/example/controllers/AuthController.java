@@ -1,15 +1,18 @@
 package org.example.controllers;
 
 import jakarta.validation.Valid;
-import org.example.Dto.UserLoginDTO;
 import org.example.Dto.UserDTO;
+import org.example.Dto.UserLoginDTO;
 import org.example.models.Role;
 import org.example.models.User;
 import org.example.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")

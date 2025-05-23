@@ -6,18 +6,20 @@ import org.example.mappers.TeamMapper;
 import org.example.models.Event;
 import org.example.models.Team;
 import org.example.models.User;
-import org.example.models.UserEventCrossRef;
+import org.example.repositories.EventRepository;
 import org.example.repositories.TeamRepository;
 import org.example.repositories.UserEventRepository;
 import org.example.repositories.UserRepository;
-import org.example.repositories.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service

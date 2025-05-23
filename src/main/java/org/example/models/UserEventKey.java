@@ -16,7 +16,8 @@ public class UserEventKey implements Serializable {
     @Column(name = "event_id")
     private UUID eventId;
 
-    public UserEventKey() {}
+    public UserEventKey() {
+    }
 
     public UserEventKey(UUID userId, UUID eventId) {
         this.userId = userId;

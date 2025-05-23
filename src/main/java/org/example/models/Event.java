@@ -1,8 +1,6 @@
 package org.example.models;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -31,7 +29,7 @@ public class Event extends BaseEntity {
     private boolean completed;
 
     private LocalDateTime completedAt;
-    private boolean verified;  // Админ проверил
+    private boolean verified;
 
     private String confirmationComment;
 
@@ -72,7 +70,8 @@ public class Event extends BaseEntity {
         this.userRefs = userRefs;
     }
 
-    public Event() {}
+    public Event() {
+    }
 
     public String getTitle() {
         return title;

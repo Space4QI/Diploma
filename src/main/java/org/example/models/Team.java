@@ -12,7 +12,7 @@ public class Team extends BaseEntity {
 
     private String name;
     private int color;
-    @Column(length = 10000) // или даже больше, если нужно
+    @Column(length = 10000)
     private String areaPoints;
     private int points;
 

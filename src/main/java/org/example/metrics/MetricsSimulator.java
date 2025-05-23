@@ -9,7 +9,7 @@ public class MetricsSimulator {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 5000) // каждые 5 секунд
+    @Scheduled(fixedRate = 5000)
     public void simulateTraffic() {
         try {
             restTemplate.getForObject("http://localhost:8080/api/events", String.class);

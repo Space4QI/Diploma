@@ -16,10 +16,15 @@ import java.util.UUID;
 public interface UserEventRepository extends JpaRepository<UserEventCrossRef, UserEventKey> {
 
     List<UserEventCrossRef> findByUserId(UUID userId);
+
     List<UserEventCrossRef> findByEventId(UUID eventId);
+
     void deleteByUserIdAndEventId(UUID userId, UUID eventId);
+
     boolean existsByUserAndEvent(User user, Event event);
+
     long countByUser_Id(UUID userId);
+
     void deleteByUserAndEvent(User user, Event event);
 
     @Query("SELECT u FROM UserEventCrossRef u JOIN FETCH u.event JOIN FETCH u.user")

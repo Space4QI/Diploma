@@ -9,12 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.UUID;
 
 @Component
 public class JwtUtil {
     private final String SECRET_KEY = "1234";
-    private final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 часов
+    private final long EXPIRATION = 1000 * 60 * 60 * 10;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

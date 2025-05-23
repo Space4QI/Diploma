@@ -19,5 +19,4 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     long countByCreator_Id(UUID creatorId);
 
-
 }

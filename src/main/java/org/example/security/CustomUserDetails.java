@@ -21,12 +21,37 @@ public class CustomUserDetails implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
-    @Override public String getPassword() { return user.getPassword(); }
-    @Override public String getUsername() { return user.getNickname(); }
-    @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return true; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
 
-    public User getUser() { return user; }
+    @Override
+    public String getUsername() {
+        return user.getNickname();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public User getUser() {
+        return user;
+    }
 }

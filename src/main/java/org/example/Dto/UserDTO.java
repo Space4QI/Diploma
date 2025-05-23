@@ -1,6 +1,9 @@
 package org.example.Dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.example.models.Role;
 
 import java.io.Serializable;
@@ -65,7 +68,8 @@ public class UserDTO implements Serializable {
         this.achievements = achievements;
     }
 
-    public UserDTO() {}
+    public UserDTO() {
+    }
 
     public UUID getId() {
         return id;

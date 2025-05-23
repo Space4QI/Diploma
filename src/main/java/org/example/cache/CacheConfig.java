@@ -17,7 +17,7 @@ public class CacheConfig {
     public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
         return RedisCacheManager.builder(factory)
                 .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofMinutes(10))) // живёт 10 мин
+                        .entryTtl(Duration.ofMinutes(10)))
                 .build();
     }
 }
