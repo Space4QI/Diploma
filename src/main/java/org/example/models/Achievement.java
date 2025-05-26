@@ -18,6 +18,7 @@ public class Achievement extends BaseEntity {
     private Set<UserAchievementCrossRef> userRefs;
 
     public Achievement(String title, String description, int imageResId, Set<UserAchievementCrossRef> userRefs) {
+        super();
         this.title = title;
         this.description = description;
         this.imageResId = imageResId;

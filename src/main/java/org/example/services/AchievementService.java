@@ -60,10 +60,15 @@ public class AchievementService {
     }
 
     public void checkAndAssign(User user) {
+        logger.info("Проверка достижений для пользователя {}", user.getNickname());
+
+        // 0. Добро пожаловать
+        assignIfNotExists(user, "Добро пожаловать");
+
+        // 1. Первое участие
         long participationCount = userEventRepository.countByUser_Id(user.getId());
         logger.info("User {} has {} participations", user.getNickname(), participationCount);
 
-        // 1. Первое участие
         if (participationCount >= 1) {
             assignIfNotExists(user, "Первое участие");
         }
@@ -103,7 +108,9 @@ public class AchievementService {
             if (!alreadyHas) {
                 UserAchievementCrossRef ref = new UserAchievementCrossRef();
                 ref.setUser(user);
+                ref.setUserId(user.getId());
                 ref.setAchievement(achievement);
+                ref.setAchievementId(achievement.getId());
                 crossRefRepository.save(ref);
                 logger.info("Achievement '{}' assigned to user {}", achievementTitle, user.getNickname());
             } else {
@@ -111,6 +118,8 @@ public class AchievementService {
             }
         } else {
             logger.warn("Achievement '{}' not found in database", achievementTitle);
+            throw new IllegalStateException("Achievement not found: " + achievementTitle);
         }
     }
+
 }

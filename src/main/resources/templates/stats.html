@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Панель аналитики</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .section-card {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .card-header-gradient {
+            background: linear-gradient(90deg, #007bff 0%, #00b4d8 100%);
+        }
+        .card-header-green {
+            background: linear-gradient(90deg, #28a745 0%, #95d5b2 100%);
+        }
+        .card-header-orange {
+            background: linear-gradient(90deg, #ffc107 0%, #ffb347 100%);
+        }
+        .card-header-grey {
+            background: linear-gradient(90deg, #6c757d 0%, #adb5bd 100%);
+        }
+        .card-header-success {
+            background: linear-gradient(90deg, #198754 0%, #a0d995 100%);
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <h1 class="text-center text-primary mb-5 display-5 fw-bold">📊 Панель аналитики</h1>
+
+    <!-- Форма фильтра -->
+    <div class="card mb-5 shadow-sm section-card">
+        <div class="card-body bg-white">
+            <form class="row g-3 align-items-end" method="get" th:action="@{/admin/stats}">
+                <div class="col-md-5">
+                    <label for="from" class="form-label fw-semibold">С</label>
+                    <input type="date" id="from" name="from" th:value="${from}" class="form-control">
+                </div>
+                <div class="col-md-5">
+                    <label for="to" class="form-label fw-semibold">По</label>
+                    <input type="date" id="to" name="to" th:value="${to}" class="form-control">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-outline-primary btn-lg">Фильтровать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Топ пользователей -->
+    <div class="card mb-5 shadow section-card">
+        <div class="card-header text-white card-header-gradient">
+            <h5 class="mb-0">🏅 Топ 10 активных пользователей</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 table-bordered">
+                <thead class="table-light text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Имя</th>
+                    <th>Кол-во участий</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user, iter : ${topUsers}">
+                    <td class="text-center" th:text="${iter.index + 1}">1</td>
+                    <td th:text="${user.fullName}">Имя</td>
+                    <td class="text-center" th:text="${user.participationCount}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Популярные мероприятия -->
+    <div class="card mb-5 shadow section-card">
+        <div class="card-header text-white card-header-green">
+            <h5 class="mb-0">📈 Популярные мероприятия</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 table-bordered">
+                <thead class="table-light text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Название</th>
+                    <th>Дата</th>
+                    <th>Участников</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="event, iter : ${popularEvents}">
+                    <td class="text-center" th:text="${iter.index + 1}">1</td>
+                    <td th:text="${event.eventName}">Мероприятие</td>
+                    <td th:text="${#temporals.format(event.date, 'dd.MM.yyyy HH:mm')}">01.01.2025</td>
+                    <td class="text-center" th:text="${event.participantCount}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Кол-во мероприятий по датам -->
+    <div class="card mb-5 shadow section-card">
+        <div class="card-header card-header-orange text-white">
+            <h5 class="mb-0">📅 Количество мероприятий по датам</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 table-bordered">
+                <thead class="table-light text-center">
+                <tr>
+                    <th>Дата</th>
+                    <th>Мероприятий</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${eventCounts}">
+                    <td th:text="${entry.key}">01.01.2025</td>
+                    <td class="text-center" th:text="${entry.value}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Топ команд -->
+    <div class="card mb-5 shadow section-card">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">👥 Топ команд по активности</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 table-bordered">
+                <thead class="table-light text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Команда</th>
+                    <th>Участников</th>
+                    <th>Участий в мероприятиях</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="team, iter : ${topTeams}">
+                    <td class="text-center" th:text="${iter.index + 1}">1</td>
+                    <td th:text="${team.teamName}">Команда</td>
+                    <td class="text-center" th:text="${team.userCount}">0</td>
+                    <td class="text-center" th:text="${team.participationCount}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- История активности -->
+    <div class="card mb-5 shadow section-card">
+        <div class="card-header card-header-grey text-white">
+            <h5 class="mb-0">📜 История активности</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 table-bordered">
+                <thead class="table-light text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Пользователь</th>
+                    <th>Мероприятие</th>
+                    <th>Дата участия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="log, iter : ${participationLog}">
+                    <td class="text-center" th:text="${iter.index + 1}">1</td>
+                    <td th:text="${log.userName}">Имя</td>
+                    <td th:text="${log.eventTitle}">Событие</td>
+                    <td th:text="${#temporals.format(log.eventTime, 'dd.MM.yyyy HH:mm')}">Дата</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Эко-герой недели -->
+    <div class="card mb-5 shadow section-card border-success">
+        <div class="card-header card-header-success text-white">
+            <h5 class="mb-0">🌿 Эко-герой недели</h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${ecoHero != null}">
+                <p class="fs-5 mb-2"><strong>👤 Никнейм:</strong> <span th:text="${ecoHero.nickname}">—</span></p>
+                <p class="fs-5 mb-2"><strong>🌟 Очки:</strong> <span th:text="${ecoHero.points}">0</span></p>
+                <p class="fs-5"><strong>📌 Участий за неделю:</strong> <span th:text="${ecoHero.events}">0</span></p>
+            </div>
+            <div th:if="${ecoHero == null}">
+                <p class="text-muted">Нет данных за эту неделю</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

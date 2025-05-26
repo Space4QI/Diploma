@@ -1,7 +1,9 @@
 package org.example.controllers;
 
+import org.example.Dto.EcoHeroDTO;
 import org.example.Dto.UserDTO;
 import org.example.Dto.UserTopDTO;
+import org.example.services.AnalyticsService;
 import org.example.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +21,11 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final AnalyticsService analyticsService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AnalyticsService analyticsService) {
         this.userService = userService;
+        this.analyticsService = analyticsService;
     }
 
     @GetMapping
@@ -101,8 +105,8 @@ public class UserController {
     }
 
     @GetMapping("/eco-hero")
-    public UserTopDTO getEcoHeroOfTheWeek() {
-        return userService.getEcoHeroOfTheWeek();
+    public EcoHeroDTO getEcoHeroOfTheWeek() {
+        return analyticsService.getEcoHeroOfTheWeek();
     }
 
     @PostMapping("/join-team")

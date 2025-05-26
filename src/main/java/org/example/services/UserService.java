@@ -168,43 +168,4 @@ public class UserService {
         System.out.println("FINAL RESULT SIZE: " + result.size());
         return result;
     }
-
-    public UserTopDTO getEcoHeroOfTheWeek() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime weekAgo = now.minusWeeks(1);
-
-        List<UserEventCrossRef> refs = userEventRepository.findAll();
-
-        Map<UUID, Integer> pointsMap = new HashMap<>();
-        Map<UUID, Integer> eventCountMap = new HashMap<>();
-        Map<UUID, String> nicknameMap = new HashMap<>();
-
-        for (UserEventCrossRef ref : refs) {
-            try {
-                LocalDateTime eventTime = LocalDateTime.parse(ref.getEvent().getDateTime());
-                if (eventTime.isAfter(weekAgo) && eventTime.isBefore(now)) {
-                    UUID userId = ref.getUser().getId();
-                    User user = ref.getUser();
-
-                    pointsMap.put(userId, pointsMap.getOrDefault(userId, 0) + user.getPoints());
-                    eventCountMap.put(userId, eventCountMap.getOrDefault(userId, 0) + 1);
-                    nicknameMap.putIfAbsent(userId, user.getNickname());
-                }
-            } catch (Exception ignored) {
-            }
-        }
-
-        return pointsMap.entrySet().stream()
-                .sorted((a, b) -> {
-                    int cmp = Integer.compare(b.getValue(), a.getValue());
-                    if (cmp == 0) {
-                        return Integer.compare(eventCountMap.getOrDefault(b.getKey(), 0),
-                                eventCountMap.getOrDefault(a.getKey(), 0));
-                    }
-                    return cmp;
-                })
-                .findFirst()
-                .map(entry -> new UserTopDTO(nicknameMap.get(entry.getKey()), entry.getValue()))
-                .orElse(null);
-    }
 }

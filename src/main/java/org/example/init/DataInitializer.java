@@ -3,10 +3,12 @@ package org.example.init;
 import jakarta.annotation.PostConstruct;
 import org.example.models.*;
 import org.example.repositories.*;
+import org.example.services.AchievementService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -19,20 +21,38 @@ public class DataInitializer {
     private final AchievementRepository achievementRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserEventRepository userEventRepository;
+    private final AchievementService achievementService;
 
     public DataInitializer(UserRepository userRepository, TeamRepository teamRepository,
                            EventRepository eventRepository, AchievementRepository achievementRepository,
-                           PasswordEncoder passwordEncoder, UserEventRepository userEventRepository) {
+                           PasswordEncoder passwordEncoder, UserEventRepository userEventRepository, AchievementService achievementService) {
         this.userRepository = userRepository;
         this.teamRepository = teamRepository;
         this.eventRepository = eventRepository;
         this.achievementRepository = achievementRepository;
         this.passwordEncoder = passwordEncoder;
         this.userEventRepository = userEventRepository;
+        this.achievementService = achievementService;
     }
 
     @PostConstruct
     public void init() {
+
+        // Достижения
+        Achievement a1 = new Achievement("Добро пожаловать", "Вы зарегистрировались на платформе", 1, Collections.emptySet());
+        Achievement a2 = new Achievement("Первое участие", "Участвуй в первом субботнике", 2, Collections.emptySet());
+        Achievement a3 = new Achievement("Постоянный участник", "Прими участие в 5 субботниках", 3, Collections.emptySet());
+        Achievement a4 = new Achievement("Присоединился к команде", "Вступи в команду", 4, Collections.emptySet());
+        Achievement a5 = new Achievement("Твой первый ивент", "Создай первое событие", 5, Collections.emptySet());
+        Achievement a6 = new Achievement("Организатор по жизни", "Создай 5 событий", 6, Collections.emptySet());
+        Achievement a7 = new Achievement("Первая сотня", "Набери 100 очков", 7, Collections.emptySet());
+
+        achievementRepository.saveAll(List.of(a1, a2, a3, a4, a5, a6, a7));
+
+        achievementRepository.findAll().forEach(a ->
+                System.out.println("Achievement saved: " + a.getTitle() + " | ID: " + a.getId())
+        );
+
         // Команда
         Team красные = new Team("Красные", 1727987712, "[[55.52830844921757, 37.511560521192806], [55.52855491609576, 37.511380813188794], [55.52867662756232, 37.511418364115], [55.52884702298009, 37.51159270770099], [55.52899611836258, 37.51227130658174], [55.5289383059347, 37.51252879864718], [55.52867358478027, 37.51271655327821], [55.52862490023523, 37.51288016802811], [55.52837995519995, 37.51304646498706], [55.528287149537995, 37.51303305394197], [55.52813653004482, 37.512882850237155], [55.528060459373584, 37.51258244282747], [55.528054373713495, 37.51234372622515], [55.52815935121738, 37.512158653803134]]");
         teamRepository.save(красные);
@@ -99,6 +119,18 @@ public class DataInitializer {
         user.setTeam(красные);
         userRepository.save(user);
 
+        User testUser = new User();
+        testUser.setName("Тестовый");
+        testUser.setNickname("tester01");
+        testUser.setPhone("9990000009");
+        testUser.setPassword(passwordEncoder.encode("testpass"));
+        testUser.setRole(Role.USER);
+        testUser.setPoints(150);
+        testUser.setEventCount(5);
+        testUser.setAvatarUri("img/tester.png");
+        testUser.setTeam(красные);
+        userRepository.save(testUser);
+
         // Событие
         Event event = new Event();
         event.setTitle("Субботник в парке");
@@ -121,11 +153,12 @@ public class DataInitializer {
         UserEventCrossRef ref = new UserEventCrossRef(user, event, LocalDateTime.now());
         userEventRepository.save(ref);
 
-        // Достижение
-        Achievement achievement = new Achievement();
-        achievement.setTitle("Первый шаг");
-        achievement.setDescription("Участвуй в первом субботнике");
-        achievement.setImageResId(1);
-        achievementRepository.save(achievement);
+        UserEventCrossRef testRef = new UserEventCrossRef(testUser, event, LocalDateTime.now());
+        userEventRepository.save(testRef);
+
+        achievementService.checkAndAssign(admin);
+        achievementService.checkAndAssign(organizer);
+        achievementService.checkAndAssign(user);
+        achievementService.checkAndAssign(testUser);
     }
 }
