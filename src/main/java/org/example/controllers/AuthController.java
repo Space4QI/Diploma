@@ -1,13 +1,13 @@
 package org.example.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.example.Dto.UserDTO;
 import org.example.Dto.UserLoginDTO;
-import org.example.models.Role;
-import org.example.models.User;
-import org.example.repositories.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.example.services.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,51 +16,40 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "User registration and login API")
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final AuthService authService;
 
-    private final UserRepository userRepository;
-
-    public AuthController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
+    @Operation(
+            summary = "Register a new user",
+            description = "Registers a new user with phone, name and password",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User registered successfully"),
+                    @ApiResponse(responseCode = "400", description = "User already exists",
+                            content = @Content(mediaType = "application/json"))
+            }
+    )
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO) {
-        logger.info("[POST /auth/register] Register attempt for phone: {}", userDTO.getPhone());
-
-        if (userRepository.findByPhone(userDTO.getPhone()).isPresent()) {
-            logger.warn("User with phone {} already exists", userDTO.getPhone());
-            return ResponseEntity.badRequest().body("User already exists");
-        }
-
-        User user = new User();
-        user.setName(userDTO.getName());
-        user.setNickname(userDTO.getNickname());
-        user.setPhone(userDTO.getPhone());
-        user.setPassword(userDTO.getPassword());
-        user.setRole(Role.USER);
-
-        userRepository.save(user);
-
-        logger.info("User registered successfully: {}", userDTO.getPhone());
-        return ResponseEntity.ok("User registered");
+        return authService.register(userDTO);
     }
 
     @PostMapping("/login")
+    @Operation(
+            summary = "User login",
+            description = "Authenticate a user with phone and password",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Login successful"),
+                    @ApiResponse(responseCode = "401", description = "Invalid credentials",
+                            content = @Content(mediaType = "application/json"))
+            }
+    )
     public ResponseEntity<?> login(@RequestBody UserLoginDTO request) {
-        logger.info("[POST /auth/login] Login attempt for phone: {}", request.getPhone());
-
-        return userRepository.findByPhone(request.getPhone())
-                .filter(user -> user.getPassword().equals(request.getPassword()))
-                .map(user -> {
-                    logger.info("Login successful for phone: {}", request.getPhone());
-                    return ResponseEntity.ok("Login successful");
-                })
-                .orElseGet(() -> {
-                    logger.warn("Login failed for phone: {}", request.getPhone());
-                    return ResponseEntity.status(401).body("Invalid credentials");
-                });
+        return authService.login(request);
     }
 }
