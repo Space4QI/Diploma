@@ -27,12 +27,14 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserEventRepository userEventRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AchievementService achievementService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, UserEventRepository userEventRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, UserEventRepository userEventRepository, PasswordEncoder passwordEncoder, AchievementService achievementService ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.userEventRepository = userEventRepository;
         this.passwordEncoder = passwordEncoder;
+        this.achievementService = achievementService;
     }
 
     @Cacheable("users_all")
@@ -69,9 +71,12 @@ public class UserService {
 
         user = userRepository.save(user);
         logger.info("User saved with ID: {}", user.getId());
+
+        // 👇 Присваиваем ачивку "Добро пожаловать"
+        achievementService.assignWelcomeAchievement(user);
+
         return userMapper.toDTO(user);
     }
-
 
     public void assignRole(UUID userId, String role) {
         logger.info("Assigning role '{}' to user {}", role, userId);

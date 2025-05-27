@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +51,11 @@ public class AchievementService {
                 .collect(Collectors.toList());
         logger.info("Found {} achievements", achievements.size());
         return achievements;
+    }
+
+    public void assignWelcomeAchievement(User user) {
+        logger.info("Assigning welcome achievement to user {}", user.getNickname());
+        assignIfNotExists(user, "Добро пожаловать");
     }
 
     public AchievementDTO save(AchievementDTO dto) {
@@ -120,6 +126,26 @@ public class AchievementService {
             logger.warn("Achievement '{}' not found in database", achievementTitle);
             throw new IllegalStateException("Achievement not found: " + achievementTitle);
         }
+    }
+
+    public List<AchievementDTO> getByUserId(UUID userId) {
+        return crossRefRepository.findAll().stream()
+                .filter(ref -> ref.getUserId().equals(userId))
+                .map(ref -> achievementRepository.findById(ref.getAchievementId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(achievementMapper::toDTO)
+                .toList();
+    }
+
+    public List<AchievementDTO> getByUserPhone(String phone) {
+        return crossRefRepository.findAll().stream()
+                .filter(ref -> ref.getUser() != null && phone.equals(ref.getUser().getPhone()))
+                .map(ref -> achievementRepository.findById(ref.getAchievementId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(achievementMapper::toDTO)
+                .toList();
     }
 
 }

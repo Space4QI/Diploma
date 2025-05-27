@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/achievements")
@@ -59,4 +60,42 @@ public class AchievementController {
         logger.info("Achievement created: {}", saved);
         return ResponseEntity.ok(saved);
     }
+
+    @GetMapping("/user/{userId}")
+    @Operation(
+            summary = "Get achievements for a specific user",
+            description = "Returns all achievements earned by a user with given ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful retrieval",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = AchievementDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
+    )
+    public ResponseEntity<List<AchievementDTO>> getAchievementsByUserId(@PathVariable UUID userId) {
+        logger.info("[GET /achievements/user/{}] getAchievementsByUser called", userId);
+        List<AchievementDTO> userAchievements = achievementService.getByUserId(userId);
+        logger.info("Found {} achievements for user {}", userAchievements.size(), userId);
+        return ResponseEntity.ok(userAchievements);
+    }
+
+    @GetMapping("/phone/{phone}")
+    @Operation(
+            summary = "Get achievements for a user by phone",
+            description = "Returns all achievements earned by a user with given phone number",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful retrieval",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = AchievementDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            }
+    )
+    public ResponseEntity<List<AchievementDTO>> getAchievementsByUserPhone(@PathVariable String phone) {
+        logger.info("[GET /achievements/phone/{}] getAchievementsByUserPhone called", phone);
+        List<AchievementDTO> userAchievements = achievementService.getByUserPhone(phone);
+        logger.info("Found {} achievements for user with phone {}", userAchievements.size(), phone);
+        return ResponseEntity.ok(userAchievements);
+    }
+
+
 }
