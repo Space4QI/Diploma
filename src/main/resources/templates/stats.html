@@ -123,8 +123,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="entry : ${eventCounts}">
-                    <td th:text="${entry.key}">01.01.2025</td>
-                    <td class="text-center" th:text="${entry.value}">0</td>
+                    <td th:text="${#temporals.format(entry.date, 'dd.MM.yyyy')}">01.01.2025</td>
+                    <td class="text-center" th:text="${entry.count}">0</td>
                 </tr>
                 </tbody>
             </table>

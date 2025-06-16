@@ -55,6 +55,20 @@
             padding: 0.5em 0.75em;
             border-radius: 0.5rem;
         }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
     </style>
 </head>
 <body class="p-4">
@@ -90,13 +104,13 @@
         <div class="card-header card-gradient-green">🎯 Начисление очков пользователю</div>
         <div class="card-body">
             <form th:action="@{/admin/add-points-to-user}" method="post" class="row g-3 align-items-end">
-                <div class="col-md-5">
+                <div class="col-md-5 position-relative">
                     <label class="form-label">Пользователь</label>
-                    <select name="userId" class="form-select" required>
-                        <option th:each="user : ${users}"
-                                th:value="${user.id}"
-                                th:text="|${user.nickname} (${user.points} очков)|"></option>
-                    </select>
+                    <div class="position-relative">
+                        <input type="text" id="user-search" class="form-control" placeholder="Введите никнейм..." required autocomplete="off">
+                        <input type="hidden" name="userId" id="selectedUserId">
+                        <div id="autocomplete-list" class="autocomplete-list list-group"></div>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Очки</label>
@@ -114,13 +128,13 @@
         <div class="card-header card-gradient-orange">🧑‍💼 Назначение ролей пользователям</div>
         <div class="card-body">
             <form th:action="@{/admin/assign-role}" method="post" class="row g-3 align-items-end">
-                <div class="col-md-5">
+                <div class="col-md-5 position-relative">
                     <label class="form-label">Пользователь</label>
-                    <select name="userId" class="form-select" required>
-                        <option th:each="user : ${users}"
-                                th:value="${user.id}"
-                                th:text="|${user.nickname} (${user.role})|"></option>
-                    </select>
+                    <div class="position-relative">
+                        <input type="text" id="role-user-search" class="form-control" placeholder="Введите никнейм..." required autocomplete="off">
+                        <input type="hidden" name="userId" id="role-selectedUserId">
+                        <div class="autocomplete-list list-group"></div>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Роль</label>
@@ -182,7 +196,7 @@
 
                     <div class="row mb-3" th:if="${event.imageUri != null}">
                         <div class="col-md-3 mb-2" th:each="uri : ${event.imageUri}">
-                            <img th:src="@{${uri}}" class="img-fluid img-thumbnail shadow-sm" alt="Фото мероприятия">
+                            <img th:src="@{'/img/' + ${uri}}" class="img-fluid img-thumbnail shadow-sm" alt="Фото мероприятия">
                         </div>
                     </div>
 
@@ -223,5 +237,6 @@
     </div>
 
 </div>
+<script src="/js/autocomplete.js"></script>
 </body>
 </html>

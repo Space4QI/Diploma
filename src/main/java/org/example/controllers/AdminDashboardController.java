@@ -1,9 +1,11 @@
 package org.example.controllers;
 
+import org.example.Dto.UserDTO;
 import org.example.services.AdminService;
 import org.example.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -58,13 +61,13 @@ public class AdminDashboardController {
 
     @PostMapping("/calculate-top")
     public String calculateTop(Model model) {
-        logger.info("[POST /admin/calculate-top] calculateTop called");
         model.addAttribute("sortedTeams", adminService.getSortedTeams());
         model.addAttribute("teams", adminService.getAllTeams());
         model.addAttribute("events", adminService.getEventsToVerify());
-        logger.info("Top teams calculated and model updated");
+        model.addAttribute("users", userService.getAll());
         return "admin";
     }
+
 
     @PostMapping("/verify-event")
     public String verifyEvent(@RequestParam UUID eventId,
@@ -98,5 +101,11 @@ public class AdminDashboardController {
         logger.info("[POST /admin/add-points-to-participant] eventId={}, participant={}, points={}", eventId, participantName, points);
         adminService.addPointsToParticipant(eventId, participantName, points);
         return "redirect:/admin";
+    }
+
+    @GetMapping("/search-users")
+    public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String query) {
+        List<UserDTO> users = userService.searchByNickname(query);
+        return ResponseEntity.ok(users);
     }
 }

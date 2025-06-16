@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByNickname(String nickname);
 
     List<User> nickname(String nickname);
+
+    List<User> findByNicknameStartingWithIgnoreCase(String nickname);
 }

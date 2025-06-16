@@ -108,28 +108,69 @@ public class DataInitializer {
 
         // Пользователь
         User user = new User();
-        user.setName("Пользователь");
-        user.setNickname("user01");
-        user.setPhone("9990000003");
-        user.setPassword(passwordEncoder.encode("userpass"));
+        user.setName("Вова");
+        user.setNickname("kosma");
+        user.setPhone("89771829402");
+        user.setPassword(passwordEncoder.encode("vovkaplovka"));
         user.setRole(Role.USER);
-        user.setPoints(20);
-        user.setEventCount(2);
+        user.setPoints(10);
+        user.setEventCount(1);
         user.setAvatarUri("img/user.png");
         user.setTeam(красные);
+        user.setJoinedTeamAt(LocalDateTime.now());
         userRepository.save(user);
 
-        User testUser = new User();
-        testUser.setName("Тестовый");
-        testUser.setNickname("tester01");
-        testUser.setPhone("9990000009");
-        testUser.setPassword(passwordEncoder.encode("testpass"));
-        testUser.setRole(Role.USER);
-        testUser.setPoints(150);
-        testUser.setEventCount(5);
-        testUser.setAvatarUri("img/tester.png");
-        testUser.setTeam(красные);
-        userRepository.save(testUser);
+        User user2 = new User();
+        user2.setName("Вадим");
+        user2.setNickname("vadiks");
+        user2.setPhone("89042283750");
+        user2.setPassword(passwordEncoder.encode("vadiks2001"));
+        user2.setRole(Role.USER);
+        user2.setPoints(150);
+        user2.setEventCount(5);
+        user2.setAvatarUri("img/user.png");
+        user2.setTeam(синие);
+        user2.setJoinedTeamAt(LocalDateTime.now());
+        userRepository.save(user2);
+
+        User user3 = new User();
+        user3.setName("Максим");
+        user3.setNickname("makserh");
+        user3.setPhone("89067734582");
+        user3.setPassword(passwordEncoder.encode("makskvaks22"));
+        user3.setRole(Role.USER);
+        user3.setPoints(120);
+        user3.setEventCount(3);
+        user3.setAvatarUri("img/user.png");
+        user3.setTeam(синие);
+        user3.setJoinedTeamAt(LocalDateTime.now());
+        userRepository.save(user3);
+
+        User user4 = new User();
+        user4.setName("Кирилл");
+        user4.setNickname("absolute");
+        user4.setPhone("89874659202");
+        user4.setPassword(passwordEncoder.encode("Absolut228"));
+        user4.setRole(Role.USER);
+        user4.setPoints(140);
+        user4.setEventCount(4);
+        user4.setAvatarUri("img/user.png");
+        user4.setTeam(красные);
+        user4.setJoinedTeamAt(LocalDateTime.now());
+        userRepository.save(user4);
+
+        User user5 = new User();
+        user5.setName("Ванек");
+        user5.setNickname("scorpion34");
+        user5.setPhone("89657483823");
+        user5.setPassword(passwordEncoder.encode("kotkot34"));
+        user5.setRole(Role.USER);
+        user5.setPoints(90);
+        user5.setEventCount(1);
+        user5.setAvatarUri("img/user.png");
+        user5.setTeam(зеленые);
+        user5.setJoinedTeamAt(LocalDateTime.now());
+        userRepository.save(user5);
 
         // Событие
         Event event = new Event();
@@ -140,25 +181,54 @@ public class DataInitializer {
         event.setLongitude(37.618423);
         event.setDateTime("2025-05-19T10:00");
         event.setCreator(organizer);
-        event.setFavorite(false);
+        event.setFavorite(true);
         event.setCompleted(true);
         event.setVerified(false);
         event.setRejected(false);
-        event.setParticipantCount(3);
+        event.setParticipantCount(10);
         event.setConfirmationComment("Чисто");
-        event.setImageUri(List.of("img/clean1.jpg", "img/clean2.jpg", "img/clean3.jpg"));
-        event.setTeams(Set.of(красные));
+        event.setImageUri(List.of("clean1.jpg", "clean2.jpg", "clean3.jpg"));
+        event.setTeams(Set.of(зеленые));
+        event.setCompletedAt(LocalDateTime.of(2025, 6, 10, 11, 0));
         eventRepository.save(event);
 
-        UserEventCrossRef ref = new UserEventCrossRef(user, event, LocalDateTime.now());
-        userEventRepository.save(ref);
+        Event event2 = new Event();
+        event2.setTitle("Чистка набережной у Москва-реки");
+        event2.setDescription("Сбор мусора вдоль берега, расчистка тропинок и установка урн");
+        event2.setLocationName("Набережная Тараса Шевченко");
+        event2.setLatitude(55.748933);
+        event2.setLongitude(37.540569);
+        event2.setDateTime("2025-06-04T09:30");
+        event2.setCreator(organizer);
+        event2.setFavorite(true);
+        event2.setCompleted(true);
+        event2.setVerified(true);
+        event2.setRejected(false);
+        event2.setParticipantCount(4);
+        event2.setConfirmationComment("Работа проведена на отлично");
+        event2.setImageUri(List.of("river1.jpg", "path2.jpg", "clean_area.jpg"));
+        event2.setTeams(Set.of(красные, синие));
+        event2.setCompletedAt(LocalDateTime.of(2025, 6, 3, 11, 0));
+        eventRepository.save(event2);
 
-        UserEventCrossRef testRef = new UserEventCrossRef(testUser, event, LocalDateTime.now());
+        UserEventCrossRef testRef = new UserEventCrossRef(user5, event, LocalDateTime.now());
         userEventRepository.save(testRef);
+
+        UserEventCrossRef ref = new UserEventCrossRef(user, event2, LocalDateTime.of(2025, 6, 4, 9, 0));
+        userEventRepository.save(ref);
+        UserEventCrossRef ref2 = new UserEventCrossRef(user2, event2, LocalDateTime.of(2025, 6, 4, 9, 0));
+        userEventRepository.save(ref2);
+        UserEventCrossRef ref3 = new UserEventCrossRef(user3, event2, LocalDateTime.of(2025, 6, 4, 9, 0));
+        userEventRepository.save(ref3);
+        UserEventCrossRef ref4 = new UserEventCrossRef(user4, event2, LocalDateTime.of(2025, 6, 4, 9, 0));
+        userEventRepository.save(ref4);
 
         achievementService.checkAndAssign(admin);
         achievementService.checkAndAssign(organizer);
         achievementService.checkAndAssign(user);
-        achievementService.checkAndAssign(testUser);
+        achievementService.checkAndAssign(user2);
+        achievementService.checkAndAssign(user3);
+        achievementService.checkAndAssign(user4);
+        achievementService.checkAndAssign(user5);
     }
 }

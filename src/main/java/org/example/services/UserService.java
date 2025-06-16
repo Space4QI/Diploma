@@ -72,7 +72,6 @@ public class UserService {
         user = userRepository.save(user);
         logger.info("User saved with ID: {}", user.getId());
 
-        // 👇 Присваиваем ачивку "Добро пожаловать"
         achievementService.assignWelcomeAchievement(user);
 
         return userMapper.toDTO(user);
@@ -124,6 +123,15 @@ public class UserService {
         User updated = userRepository.save(user);
         logger.info("User {} updated successfully", id);
         return userMapper.toDTO(updated);
+    }
+
+    @Cacheable(value = "users_search", key = "#query")
+    public List<UserDTO> searchByNickname(String query) {
+        logger.info("Searching users by nickname: {}", query);
+        return userRepository.findByNicknameStartingWithIgnoreCase(query)
+                .stream()
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public List<UserTopDTO> getTopUsersBetween(LocalDateTime from, LocalDateTime to) {
